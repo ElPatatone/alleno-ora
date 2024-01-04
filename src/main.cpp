@@ -1,5 +1,7 @@
 #include <iostream>
+#include <fstream>
 #include <string>
+#include <sstream>
 #include <vector>
 
 struct Workout {
@@ -13,29 +15,31 @@ struct Workout {
 
 };
 
+struct ExerciseSet {
+    std::string exercise;
+    int sets;
+    int reps;
+    int weight;
+    std::string unit;
+};
+
 int main (int argc, char *argv[]) {
 
-    std::cout << "argc: " << argc << std::endl;
+    std::ifstream file{"example.txt"};
 
-    for (int i = 0; i < argc; i++) {
-        std::cout << "argv: " << argv[i] << std::endl;
+    if (!file) {
+        std::cerr << "File could not be opened" << std::endl;
+        return 1;
     }
 
-    std::vector<Workout> workouts;
-    Workout firstWorkout;
-    Workout secondWorkout;
+    Workout workout;
 
-    workouts.push_back(firstWorkout);
-    workouts.push_back(secondWorkout);
+    while (file) {
+        std::string line;
+        std::getline(file, line);
+        std::cout << line << "\n";
+    }
 
-    workouts[0].date = "2024";
-    workouts[1].date = "2023";
-
-    std::cout << "date of the first workout: " << workouts[0].date << std::endl;
-    std::cout << "date of the second workout: " << workouts[1].date << std::endl;
-
-    workouts[0].rating = 1;
-    std::cout << "rating of the first workout: " << workouts[0].rating << std::endl;
     return 0;
 }
 
