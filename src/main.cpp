@@ -41,9 +41,8 @@ int main (int argc, char *argv[]) {
         } else if (line.find("@") != std::string::npos) {
             std::istringstream stream{line};
             Exercise exercise;
-            char x;
-            char at;
-            stream >> exercise.set >> x >> exercise.reps >> at >> exercise.weight;
+            char token;
+            stream >> exercise.set >> token >> exercise.reps >> token >> exercise.weight;
             currentWorkout.exercises.push_back(exercise);
         }
     }
