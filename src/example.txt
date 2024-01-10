@@ -5,7 +5,7 @@ Location: Gym
 Rating: 4
 
 - Bench press
-    Warm up
+    Warm up sets
         1 x 10 @ 20kg
         1 x 10 @ 20kg
         2 x 6 @ 40kg
@@ -13,13 +13,13 @@ Rating: 4
         1 x 6 @ 50kg
         1 x 5 @ 55kg
         3 x 3 @ 60kg
-    Backoff sets
+    Back off sets
         1 x 5 @ 55kg
         1 x 6 @ 50kg
         1 x 6 @ 40kg
 
 - Strict press
-    Backoff sets
+    Back off sets
         1 x 5 @ 55kg
         1 x 6 @ 50kg
         1 x 6 @ 40kg

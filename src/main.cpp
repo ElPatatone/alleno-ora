@@ -39,6 +39,7 @@ int main (int argc, char *argv[]) {
     Workout workout;
     Exercise exercise;
     Set set;
+    std::string currentSetType;
 
     while (getline(file, line)) {
         if (line.empty()) {
@@ -72,14 +73,19 @@ int main (int argc, char *argv[]) {
             exercise = Exercise();
             exercise.name = line.substr(2);
         }
-        // Check for set, reps, weight
-        else if (line.find("@") != std::string::npos) {
+        else if (line.find("Warm up sets") != std::string::npos) {
+            currentSetType = "Warm up sets";
+        } else if (line.find("Working sets") != std::string::npos) {
+            currentSetType = "Working sets";
+        } else if (line.find("Back off sets") != std::string::npos) {
+            currentSetType = "Back off sets";
+        } else if (line.find("@") != std::string::npos) {
             std::istringstream stream{line};
             char token;
             stream >> set.setNumber >> token >> set.repsNumber >> token >> set.weight;
+            set.setType = currentSetType;
             exercise.setsVector.push_back(set);
-        }
-    }
+        }}
 
     // add last exercise being parsed
     if (!exercise.name.empty()) {
@@ -88,13 +94,17 @@ int main (int argc, char *argv[]) {
 
     file.close();
 
-    for (const auto& exercise: workout.exercisesVector) {
+    for (const auto& exercise : workout.exercisesVector) {
         std::cout << exercise.name << std::endl;
+        std::string printedSetType = "";  // Variable to track printed set type for the current exercise
         for (const auto& set : exercise.setsVector) {
-            std::cout << set.setNumber << " " << set.repsNumber << " "  << set.weight << std::endl;
+            if (set.setType != printedSetType) {
+                std::cout << set.setType << std::endl;
+                printedSetType = set.setType;
+            }
+            std::cout << set.setNumber << " " << set.repsNumber << " " << set.weight << std::endl;
         }
     }
-
     return 0;
 }
 
