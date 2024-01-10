@@ -1,4 +1,8 @@
-2023/12/25
+Date: 2023/12/25
+Start time: 11:00
+Duration: 50
+Location: Gym
+Rating: 4
 
 - Bench press
     Warm up
@@ -15,6 +19,10 @@
         1 x 6 @ 40kg
 
 - Strict press
+    Backoff sets
+        1 x 5 @ 55kg
+        1 x 6 @ 50kg
+        1 x 6 @ 40kg
 - Push press
 - Seated machine shoulder press
 - Lateral raises
