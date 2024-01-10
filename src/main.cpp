@@ -27,7 +27,7 @@ struct Workout {
 
 int main (int argc, char *argv[]) {
 
-    std::ifstream file{"example.txt"};
+    std::ifstream file{argv[1]};
 
     if (!file.is_open()) {
         std::cerr << "File could not be opened" << std::endl;
