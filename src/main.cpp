@@ -47,11 +47,11 @@ int main (int argc, char *argv[]) {
         }
         // Check for date
         else if (line.find("Date") != std::string::npos) {
-            workout.date = line;
+            workout.date = line.substr(6);
         }
         // Check for start time
         else if (line.find("Start") != std::string::npos) {
-            workout.startTime = line;
+            workout.startTime = line.substr(12);
         }
         // Check for duration
         else if (line.find("Duration") != std::string::npos) {
@@ -59,7 +59,7 @@ int main (int argc, char *argv[]) {
         }
         // Check for location
         else if (line.find("Location") != std::string::npos) {
-            workout.location = line;
+            workout.location = line.substr(10);
         }
         // Check for rating
         else if (line.find("Rating") != std::string::npos) {
@@ -94,6 +94,12 @@ int main (int argc, char *argv[]) {
 
     file.close();
 
+    std::cout << workout.date << std::endl;
+    std::cout << workout.startTime << std::endl;
+    std::cout << workout.duration << std::endl;
+    std::cout << workout.location << std::endl;
+    std::cout << workout.rating << std::endl;
+
     for (const auto& exercise : workout.exercisesVector) {
         std::cout << exercise.name << std::endl;
         std::string printedSetType = "";  // Variable to track printed set type for the current exercise
@@ -107,4 +113,3 @@ int main (int argc, char *argv[]) {
     }
     return 0;
 }
-
