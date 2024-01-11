@@ -1,8 +1,10 @@
 #include <iostream>
+#include <filesystem>
 #include <fstream>
 #include <string>
 #include <sstream>
 #include <vector>
+#include <sqlite3.h>
 
 struct Set {
     std::string setType;
@@ -25,14 +27,92 @@ struct Workout {
     int rating;
 };
 
+bool check_for_database(std::string_view dbPath){
+    std::ofstream file{dbPath.data()};
+
+    if (file.is_open()){
+        file.close();
+        std::cout << "File exists";
+        return true;
+    }
+    return false;
+};
+
+int initializeDatabase(sqlite3 **db){
+
+    const std::string database_path = "/home/elpatatone/Documents/alleno-ora/database/workouts.db";
+    bool db_exists = check_for_database(database_path);
+    int rc = sqlite3_open(database_path.c_str(), db);
+
+    if (rc != SQLITE_OK) {
+        std::cerr << "Error: " <<  sqlite3_errmsg(*db) << std::endl;
+        return rc;
+    }
+
+    if (!db_exists) {
+        std::string create_workouts_table_query = "CREATE TABLE workouts ("
+                                            "id INTEGER PRIMARY KEY,"
+                                            "date TEXT,"
+                                            "start_time TEXT,"
+                                            "duration INTEGER,"
+                                            "rating INTEGER,"
+                                            "location TEXT"
+                                            ");";
+        rc = sqlite3_exec(*db, create_workouts_table_query.c_str(), NULL, 0, NULL);
+        if (rc != SQLITE_OK) {
+            printf("Failed to create workouts table: %s\n", sqlite3_errmsg(*db));
+            sqlite3_close(*db);
+            return rc;
+        }
+
+        std::string create_exercises_table_query = "CREATE TABLE exercises ("
+                                             "id INTEGER PRIMARY KEY,"
+                                             "workout_id INTEGER,"
+                                             "name TEXT,"
+                                             "FOREIGN KEY(workout_id) REFERENCES workouts(id)"
+                                             ");";
+        rc = sqlite3_exec(*db, create_exercises_table_query.c_str(), NULL, 0, NULL);
+        if (rc != SQLITE_OK) {
+            printf("Failed to create exercises table: %s\n", sqlite3_errmsg(*db));
+            sqlite3_close(*db);
+            return rc;
+        }
+
+        std::string create_sets_table_query = "CREATE TABLE sets ("
+                                        "id INTEGER PRIMARY KEY,"
+                                        "exercise_id INTEGER,"
+                                        "set_number INTEGER,"
+                                        "reps INTEGER,"
+                                        "weight INTEGER,"
+                                        "set_type TEXT,"
+                                        "FOREIGN KEY(exercise_id) REFERENCES exercises(id)"
+                                        ");";
+        rc = sqlite3_exec(*db, create_sets_table_query.c_str(), NULL, 0, NULL);
+        if (rc != SQLITE_OK) {
+            printf("Failed to create sets table: %s\n", sqlite3_errmsg(*db));
+            sqlite3_close(*db);
+            return rc;
+        }
+    }
+
+    return SQLITE_OK;
+}
+
 int main (int argc, char *argv[]) {
+
+    if (argc == 2) {
+        std::cerr << "File: " << argv[1] << std::endl;
+    }
 
     std::ifstream file{argv[1]};
 
-    if (!file.is_open()) {
+    if (!file.is_open()){
         std::cerr << "File could not be opened" << std::endl;
         return 1;
     }
+
+    sqlite3 *db;
+    int rc = initializeDatabase(&db);
 
     std::string line;
 
@@ -85,7 +165,8 @@ int main (int argc, char *argv[]) {
             stream >> set.setNumber >> token >> set.repsNumber >> token >> set.weight;
             set.setType = currentSetType;
             exercise.setsVector.push_back(set);
-        }}
+        }
+    }
 
     // add last exercise being parsed
     if (!exercise.name.empty()) {
