@@ -1,5 +1,4 @@
 #include <iostream>
-#include <filesystem>
 #include <fstream>
 #include <string>
 #include <sstream>
@@ -27,30 +26,52 @@ struct Workout {
     int rating;
 };
 
-bool check_for_database(std::string_view dbPath){
+std::string getDBPath(std::string configPath){
+    std::ifstream file{configPath};
+
+    if (!file.is_open()){
+        std::cerr << "Error: Config File could not be opened" << std::endl;
+    }
+
+    std::string line;
+    std::string path;
+
+    while (getline(file, line)) {
+        if (line.empty()) {
+            continue;
+        }
+        else {
+            path = line;
+        }
+    }
+    return path;
+};
+
+bool checkForDB(std::string_view dbPath){
     std::ofstream file{dbPath.data()};
 
     if (file.is_open()){
         file.close();
-        std::cout << "File exists";
+        std::cout << "Database File exists" << std::endl;
         return true;
     }
     return false;
 };
 
-int initializeDatabase(sqlite3 **db){
+int initializeDB(sqlite3 **db){
 
-    const std::string database_path = "/home/elpatatone/Documents/alleno-ora/database/workouts.db";
-    bool db_exists = check_for_database(database_path);
-    int rc = sqlite3_open(database_path.c_str(), db);
+    const std::string dbPath = getDBPath("config.txt");
+    // const std::string databasePath = "/home/elpatatone/Documents/alleno-ora/database/workouts.db";
+    bool db_exists = checkForDB(dbPath);
+    int sqlStatus = sqlite3_open(dbPath.c_str(), db);
 
-    if (rc != SQLITE_OK) {
+    if (sqlStatus != SQLITE_OK) {
         std::cerr << "Error: " <<  sqlite3_errmsg(*db) << std::endl;
-        return rc;
+        return sqlStatus;
     }
 
     if (!db_exists) {
-        std::string create_workouts_table_query = "CREATE TABLE workouts ("
+        std::string createWorkoutsTableQuery = "CREATE TABLE workouts ("
                                             "id INTEGER PRIMARY KEY,"
                                             "date TEXT,"
                                             "start_time TEXT,"
@@ -58,27 +79,27 @@ int initializeDatabase(sqlite3 **db){
                                             "rating INTEGER,"
                                             "location TEXT"
                                             ");";
-        rc = sqlite3_exec(*db, create_workouts_table_query.c_str(), NULL, 0, NULL);
-        if (rc != SQLITE_OK) {
+        sqlStatus = sqlite3_exec(*db, createWorkoutsTableQuery.c_str(), NULL, 0, NULL);
+        if (sqlStatus != SQLITE_OK) {
             printf("Failed to create workouts table: %s\n", sqlite3_errmsg(*db));
             sqlite3_close(*db);
-            return rc;
+            return sqlStatus;
         }
 
-        std::string create_exercises_table_query = "CREATE TABLE exercises ("
+        std::string createExerciseTableQuery = "CREATE TABLE exercises ("
                                              "id INTEGER PRIMARY KEY,"
                                              "workout_id INTEGER,"
                                              "name TEXT,"
                                              "FOREIGN KEY(workout_id) REFERENCES workouts(id)"
                                              ");";
-        rc = sqlite3_exec(*db, create_exercises_table_query.c_str(), NULL, 0, NULL);
-        if (rc != SQLITE_OK) {
+        sqlStatus = sqlite3_exec(*db, createExerciseTableQuery.c_str(), NULL, 0, NULL);
+        if (sqlStatus != SQLITE_OK) {
             printf("Failed to create exercises table: %s\n", sqlite3_errmsg(*db));
             sqlite3_close(*db);
-            return rc;
+            return sqlStatus;
         }
 
-        std::string create_sets_table_query = "CREATE TABLE sets ("
+        std::string createSetsTableQuery = "CREATE TABLE sets ("
                                         "id INTEGER PRIMARY KEY,"
                                         "exercise_id INTEGER,"
                                         "set_number INTEGER,"
@@ -87,11 +108,11 @@ int initializeDatabase(sqlite3 **db){
                                         "set_type TEXT,"
                                         "FOREIGN KEY(exercise_id) REFERENCES exercises(id)"
                                         ");";
-        rc = sqlite3_exec(*db, create_sets_table_query.c_str(), NULL, 0, NULL);
-        if (rc != SQLITE_OK) {
+        sqlStatus = sqlite3_exec(*db, createSetsTableQuery.c_str(), NULL, 0, NULL);
+        if (sqlStatus != SQLITE_OK) {
             printf("Failed to create sets table: %s\n", sqlite3_errmsg(*db));
             sqlite3_close(*db);
-            return rc;
+            return sqlStatus;
         }
     }
 
@@ -105,14 +126,14 @@ int main (int argc, char *argv[]) {
     }
 
     std::ifstream file{argv[1]};
-
     if (!file.is_open()){
-        std::cerr << "File could not be opened" << std::endl;
+        std::cerr << "Error: file could not be opened" << std::endl;
         return 1;
     }
 
+
     sqlite3 *db;
-    int rc = initializeDatabase(&db);
+    int rc = initializeDB(&db);
 
     std::string line;
 
@@ -175,22 +196,22 @@ int main (int argc, char *argv[]) {
 
     file.close();
 
-    std::cout << workout.date << std::endl;
-    std::cout << workout.startTime << std::endl;
-    std::cout << workout.duration << std::endl;
-    std::cout << workout.location << std::endl;
-    std::cout << workout.rating << std::endl;
-
-    for (const auto& exercise : workout.exercisesVector) {
-        std::cout << exercise.name << std::endl;
-        std::string printedSetType = "";  // Variable to track printed set type for the current exercise
-        for (const auto& set : exercise.setsVector) {
-            if (set.setType != printedSetType) {
-                std::cout << set.setType << std::endl;
-                printedSetType = set.setType;
-            }
-            std::cout << set.setNumber << " " << set.repsNumber << " " << set.weight << std::endl;
-        }
-    }
+    // std::cout << workout.date << std::endl;
+    // std::cout << workout.startTime << std::endl;
+    // std::cout << workout.duration << std::endl;
+    // std::cout << workout.location << std::endl;
+    // std::cout << workout.rating << std::endl;
+    //
+    // for (const auto& exercise : workout.exercisesVector) {
+    //     std::cout << exercise.name << std::endl;
+    //     std::string printedSetType = "";  // Variable to track printed set type for the current exercise
+    //     for (const auto& set : exercise.setsVector) {
+    //         if (set.setType != printedSetType) {
+    //             std::cout << set.setType << std::endl;
+    //             printedSetType = set.setType;
+    //         }
+    //         std::cout << set.setNumber << " " << set.repsNumber << " " << set.weight << std::endl;
+    //     }
+    // }
     return 0;
 }
