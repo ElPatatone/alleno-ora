@@ -1,12 +1,19 @@
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 #include <string>
 #include <sstream>
 #include <vector>
 #include <sqlite3.h>
 
+enum SetType {
+    WARM_UP_SETS,
+    WORKING_SETS,
+    BACK_OFF_SETS
+};
+
 struct Set {
-    std::string setType;
+    SetType setType;
     int setNumber;
     int repsNumber;
     int weight;
@@ -26,41 +33,57 @@ struct Workout {
     int rating;
 };
 
-std::string getDBPath(std::string configPath){
-    std::ifstream file{configPath};
+const std::string CONFIG_FILE_PATH = "config.txt";
 
-    if (!file.is_open()){
-        std::cerr << "Error: Config File could not be opened" << std::endl;
+std::string setTypeName(SetType setType) {
+    switch (setType) {
+        case WARM_UP_SETS:
+            return "Warm up sets";
+        case WORKING_SETS:
+            return "Working sets";
+        case BACK_OFF_SETS:
+            return "Back off sets";
+        default:
+            return "Unknown";
     }
+}
 
-    std::string line;
-    std::string path;
+std::string getDBPath(std::string configPath) {
+    try {
+        std::ifstream configFile{configPath};
 
-    while (getline(file, line)) {
-        if (line.empty()) {
-            continue;
+        if (!configFile.is_open()) {
+            throw std::runtime_error("Error: Config File could not be opened");
         }
-        else {
-            path = line;
+
+        std::string line;
+        std::string path;
+
+        while (getline(configFile, line)) {
+            if (!line.empty()) {
+                path = line;
+            }
         }
+
+        configFile.close(); // Close the file after reading
+        return path;
+    } catch (const std::exception &e) {
+        std::cerr << "[Exception in getDBPath] " << e.what() << std::endl;
+        return "";
     }
-    return path;
-};
+}
 
 bool checkForDB(std::string_view dbPath){
-    std::ofstream file{dbPath.data()};
-
-    if (file.is_open()){
-        file.close();
-        std::cout << "Database File exists" << std::endl;
+    if (std::filesystem::exists(dbPath)){
         return true;
     }
-    return false;
+    else {
+        return false;
+    }
 };
 
 int initializeDB(sqlite3 **db){
-
-    const std::string dbPath = getDBPath("config.txt");
+    const std::string dbPath = getDBPath(CONFIG_FILE_PATH);
     // const std::string databasePath = "/home/elpatatone/Documents/alleno-ora/database/workouts.db";
     bool db_exists = checkForDB(dbPath);
     int sqlStatus = sqlite3_open(dbPath.c_str(), db);
@@ -114,33 +137,22 @@ int initializeDB(sqlite3 **db){
             sqlite3_close(*db);
             return sqlStatus;
         }
+        std::cout << "Database File has been made successfully" << std::endl;
+    }
+    else {
+        std::cout << "Database File already exists" << std::endl;
     }
 
+    sqlite3_close(*db);
     return SQLITE_OK;
 }
 
-int main (int argc, char *argv[]) {
-
-    if (argc == 2) {
-        std::cerr << "File: " << argv[1] << std::endl;
-    }
-
-    std::ifstream file{argv[1]};
-    if (!file.is_open()){
-        std::cerr << "Error: file could not be opened" << std::endl;
-        return 1;
-    }
-
-
-    sqlite3 *db;
-    int rc = initializeDB(&db);
-
+Workout parseFile(std::ifstream& file){
     std::string line;
 
     Workout workout;
     Exercise exercise;
     Set set;
-    std::string currentSetType;
 
     while (getline(file, line)) {
         if (line.empty()) {
@@ -175,16 +187,15 @@ int main (int argc, char *argv[]) {
             exercise.name = line.substr(2);
         }
         else if (line.find("Warm up sets") != std::string::npos) {
-            currentSetType = "Warm up sets";
+            set.setType = WARM_UP_SETS;
         } else if (line.find("Working sets") != std::string::npos) {
-            currentSetType = "Working sets";
+            set.setType = WORKING_SETS;
         } else if (line.find("Back off sets") != std::string::npos) {
-            currentSetType = "Back off sets";
+            set.setType = BACK_OFF_SETS;
         } else if (line.find("@") != std::string::npos) {
             std::istringstream stream{line};
             char token;
             stream >> set.setNumber >> token >> set.repsNumber >> token >> set.weight;
-            set.setType = currentSetType;
             exercise.setsVector.push_back(set);
         }
     }
@@ -194,24 +205,52 @@ int main (int argc, char *argv[]) {
         workout.exercisesVector.push_back(exercise);
     }
 
-    file.close();
+    std::cout << "File parsed successfully" << std::endl;
+    return workout;
+}
 
-    // std::cout << workout.date << std::endl;
-    // std::cout << workout.startTime << std::endl;
-    // std::cout << workout.duration << std::endl;
-    // std::cout << workout.location << std::endl;
-    // std::cout << workout.rating << std::endl;
-    //
-    // for (const auto& exercise : workout.exercisesVector) {
-    //     std::cout << exercise.name << std::endl;
-    //     std::string printedSetType = "";  // Variable to track printed set type for the current exercise
-    //     for (const auto& set : exercise.setsVector) {
-    //         if (set.setType != printedSetType) {
-    //             std::cout << set.setType << std::endl;
-    //             printedSetType = set.setType;
-    //         }
-    //         std::cout << set.setNumber << " " << set.repsNumber << " " << set.weight << std::endl;
-    //     }
-    // }
-    return 0;
+int main (int argc, char *argv[]) {
+    if (argc == 2) {
+        std::cout << "File: " << argv[1] << std::endl;
+    }
+
+    try {
+        if (argc == 1) {
+            throw std::runtime_error("Error: no workout file was selected");
+            return 1;
+        }
+
+        std::ifstream file{argv[1]};
+        if (!file.is_open()){
+            throw std::runtime_error("Error: could not open file " + std::string(argv[1]));
+            return 1;
+        }
+
+        sqlite3 *db;
+        int rc = initializeDB(&db);
+
+        Workout workout = parseFile(file);
+        std::cout << workout.date << std::endl;
+        std::cout << workout.startTime << std::endl;
+        std::cout << workout.duration << std::endl;
+        std::cout << workout.location << std::endl;
+        std::cout << workout.rating << std::endl;
+
+        for (const auto& exercise : workout.exercisesVector) {
+            std::cout << exercise.name << std::endl;
+            std::string printedSetType = "";  // Variable to track printed set type for the current exercise
+            for (const auto& set : exercise.setsVector) {
+                if (setTypeName(set.setType) != printedSetType) {
+                    std::cout << setTypeName(set.setType) << std::endl;
+                    printedSetType = setTypeName(set.setType);
+                }
+                std::cout << set.setNumber << " " << set.repsNumber << " " << set.weight << std::endl;
+            }
+        }
+
+        return 0;
+    } catch (const std::exception &e) {
+        std::cerr << "[Exception] " << e.what() << std::endl;
+    }
+
 }
