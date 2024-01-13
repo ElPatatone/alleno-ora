@@ -53,7 +53,7 @@ std::string getDBPath(std::string configPath) {
         std::ifstream configFile{configPath};
 
         if (!configFile.is_open()) {
-            throw std::runtime_error("Error: Config File could not be opened");
+            throw std::runtime_error("[Config File] Config File could not be opened");
         }
 
         std::string line;
@@ -68,7 +68,7 @@ std::string getDBPath(std::string configPath) {
         configFile.close(); // Close the file after reading
         return path;
     } catch (const std::exception &e) {
-        std::cerr << "[Exception in getDBPath] " << e.what() << std::endl;
+        std::cerr << "[Error] " << e.what() << std::endl;
         return "";
     }
 }
@@ -154,59 +154,74 @@ Workout parseFile(std::ifstream& file){
     Exercise exercise;
     Set set;
 
-    while (getline(file, line)) {
-        if (line.empty()) {
-            continue;
-        }
-        // Check for date
-        else if (line.find("Date") != std::string::npos) {
-            workout.date = line.substr(6);
-        }
-        // Check for start time
-        else if (line.find("Start") != std::string::npos) {
-            workout.startTime = line.substr(12);
-        }
-        // Check for duration
-        else if (line.find("Duration") != std::string::npos) {
-            workout.duration = std::stoi(line.substr(10));
-        }
-        // Check for location
-        else if (line.find("Location") != std::string::npos) {
-            workout.location = line.substr(10);
-        }
-        // Check for rating
-        else if (line.find("Rating") != std::string::npos) {
-            workout.rating = std::stoi(line.substr(8));
-        }
-        // Check for exercise name
-        else if (line[0] == '-'){
-            if (!exercise.name.empty()) {
-                workout.exercisesVector.push_back(exercise);
+    try {
+        while (getline(file, line)) {
+            if (line.empty()) {
+                continue;
             }
-            exercise = Exercise();
-            exercise.name = line.substr(2);
+            // Check for date
+            else if (line.find("Date") != std::string::npos) {
+                workout.date = line.substr(6);
+            }
+            // Check for start time
+            else if (line.find("Start") != std::string::npos) {
+                workout.startTime = line.substr(12);
+            }
+            // Check for duration
+            else if (line.find("Duration") != std::string::npos) {
+                try {
+                    workout.duration = std::stoi(line.substr(10));
+                } catch (const std::invalid_argument& e) {
+                    throw std::runtime_error("[Workout File] Invalid argument during duration conversion: " + std::string(e.what()));
+                } catch (const std::out_of_range& e) {
+                    throw std::runtime_error("[Workout File] Out of range error during duration conversion: " + std::string(e.what()));
+                }
+            }
+            // Check for location
+            else if (line.find("Location") != std::string::npos) {
+                workout.location = line.substr(10);
+            }
+            // Check for rating
+            else if (line.find("Rating") != std::string::npos) {
+                try {
+                    workout.rating = std::stoi(line.substr(8));
+                } catch (const std::invalid_argument& e) {
+                    throw std::runtime_error("[Workout File] Invalid argument during rating conversion: " + std::string(e.what()));
+                } catch (const std::out_of_range& e) {
+                    throw std::runtime_error("[Workout File] Out of range error during rating conversion: " + std::string(e.what()));
+                }            }
+            // Check for exercise name
+            else if (line[0] == '-'){
+                if (!exercise.name.empty()) {
+                    workout.exercisesVector.push_back(exercise);
+                }
+                exercise = Exercise();
+                exercise.name = line.substr(2);
+            }
+            else if (line.find("Warm up sets") != std::string::npos) {
+                set.setType = WARM_UP_SETS;
+            } else if (line.find("Working sets") != std::string::npos) {
+                set.setType = WORKING_SETS;
+            } else if (line.find("Back off sets") != std::string::npos) {
+                set.setType = BACK_OFF_SETS;
+            } else if (line.find("@") != std::string::npos) {
+                std::istringstream stream{line};
+                char token;
+                stream >> set.setNumber >> token >> set.repsNumber >> token >> set.weight;
+                exercise.setsVector.push_back(set);
+            }
         }
-        else if (line.find("Warm up sets") != std::string::npos) {
-            set.setType = WARM_UP_SETS;
-        } else if (line.find("Working sets") != std::string::npos) {
-            set.setType = WORKING_SETS;
-        } else if (line.find("Back off sets") != std::string::npos) {
-            set.setType = BACK_OFF_SETS;
-        } else if (line.find("@") != std::string::npos) {
-            std::istringstream stream{line};
-            char token;
-            stream >> set.setNumber >> token >> set.repsNumber >> token >> set.weight;
-            exercise.setsVector.push_back(set);
+
+        // add last exercise being parsed
+        if (!exercise.name.empty()) {
+            workout.exercisesVector.push_back(exercise);
         }
-    }
 
-    // add last exercise being parsed
-    if (!exercise.name.empty()) {
-        workout.exercisesVector.push_back(exercise);
+        std::cout << "File parsed successfully" << std::endl;
+        return workout;
+    } catch (const std::exception& e) {
+        throw;
     }
-
-    std::cout << "File parsed successfully" << std::endl;
-    return workout;
 }
 
 int main (int argc, char *argv[]) {
@@ -216,13 +231,13 @@ int main (int argc, char *argv[]) {
 
     try {
         if (argc == 1) {
-            throw std::runtime_error("Error: no workout file was selected");
+            throw std::runtime_error("no workout file was selected");
             return 1;
         }
 
         std::ifstream file{argv[1]};
         if (!file.is_open()){
-            throw std::runtime_error("Error: could not open file " + std::string(argv[1]));
+            throw std::runtime_error("could not open file " + std::string(argv[1]));
             return 1;
         }
 
@@ -250,7 +265,6 @@ int main (int argc, char *argv[]) {
 
         return 0;
     } catch (const std::exception &e) {
-        std::cerr << "[Exception] " << e.what() << std::endl;
+        std::cerr << "[Error] " << e.what() << std::endl;
     }
-
 }
