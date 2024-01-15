@@ -1,6 +1,6 @@
+#include "db.hpp"
 #include <iostream>
 #include <fstream>
-#include <filesystem>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -48,104 +48,104 @@ std::string setTypeName(SetType setType) {
     }
 }
 
-std::string getDBPath(std::string configPath) {
-    try {
-        std::ifstream configFile{configPath};
+// std::string getDBPath(std::string configPath) {
+//     try {
+//         std::ifstream configFile{configPath};
+//
+//         if (!configFile.is_open()) {
+//             throw std::runtime_error("[Config File] Config File could not be opened");
+//         }
+//
+//         std::string line;
+//         std::string path;
+//
+//         while (getline(configFile, line)) {
+//             if (!line.empty()) {
+//                 path = line;
+//             }
+//         }
+//
+//         configFile.close(); // Close the file after reading
+//         return path;
+//     } catch (const std::exception &e) {
+//         std::cerr << "[Error] " << e.what() << std::endl;
+//         return "";
+//     }
+// }
 
-        if (!configFile.is_open()) {
-            throw std::runtime_error("[Config File] Config File could not be opened");
-        }
+// bool checkForDB(std::string_view dbPath){
+//     if (std::filesystem::exists(dbPath)){
+//         return true;
+//     }
+//     else {
+//         return false;
+//     }
+// };
 
-        std::string line;
-        std::string path;
-
-        while (getline(configFile, line)) {
-            if (!line.empty()) {
-                path = line;
-            }
-        }
-
-        configFile.close(); // Close the file after reading
-        return path;
-    } catch (const std::exception &e) {
-        std::cerr << "[Error] " << e.what() << std::endl;
-        return "";
-    }
-}
-
-bool checkForDB(std::string_view dbPath){
-    if (std::filesystem::exists(dbPath)){
-        return true;
-    }
-    else {
-        return false;
-    }
-};
-
-int initializeDB(sqlite3 **db){
-    const std::string dbPath = getDBPath(CONFIG_FILE_PATH);
-    // const std::string databasePath = "/home/elpatatone/Documents/alleno-ora/database/workouts.db";
-    bool db_exists = checkForDB(dbPath);
-    int sqlStatus = sqlite3_open(dbPath.c_str(), db);
-
-    if (sqlStatus != SQLITE_OK) {
-        std::cerr << "Error: " <<  sqlite3_errmsg(*db) << std::endl;
-        return sqlStatus;
-    }
-
-    if (!db_exists) {
-        std::string createWorkoutsTableQuery = "CREATE TABLE workouts ("
-                                            "id INTEGER PRIMARY KEY,"
-                                            "date TEXT,"
-                                            "start_time TEXT,"
-                                            "duration INTEGER,"
-                                            "rating INTEGER,"
-                                            "location TEXT"
-                                            ");";
-        sqlStatus = sqlite3_exec(*db, createWorkoutsTableQuery.c_str(), NULL, 0, NULL);
-        if (sqlStatus != SQLITE_OK) {
-            printf("Failed to create workouts table: %s\n", sqlite3_errmsg(*db));
-            sqlite3_close(*db);
-            return sqlStatus;
-        }
-
-        std::string createExerciseTableQuery = "CREATE TABLE exercises ("
-                                             "id INTEGER PRIMARY KEY,"
-                                             "workout_id INTEGER,"
-                                             "name TEXT,"
-                                             "FOREIGN KEY(workout_id) REFERENCES workouts(id)"
-                                             ");";
-        sqlStatus = sqlite3_exec(*db, createExerciseTableQuery.c_str(), NULL, 0, NULL);
-        if (sqlStatus != SQLITE_OK) {
-            printf("Failed to create exercises table: %s\n", sqlite3_errmsg(*db));
-            sqlite3_close(*db);
-            return sqlStatus;
-        }
-
-        std::string createSetsTableQuery = "CREATE TABLE sets ("
-                                        "id INTEGER PRIMARY KEY,"
-                                        "exercise_id INTEGER,"
-                                        "set_number INTEGER,"
-                                        "reps INTEGER,"
-                                        "weight INTEGER,"
-                                        "set_type TEXT,"
-                                        "FOREIGN KEY(exercise_id) REFERENCES exercises(id)"
-                                        ");";
-        sqlStatus = sqlite3_exec(*db, createSetsTableQuery.c_str(), NULL, 0, NULL);
-        if (sqlStatus != SQLITE_OK) {
-            printf("Failed to create sets table: %s\n", sqlite3_errmsg(*db));
-            sqlite3_close(*db);
-            return sqlStatus;
-        }
-        std::cout << "Database File has been made successfully" << std::endl;
-    }
-    else {
-        std::cout << "Database File already exists" << std::endl;
-    }
-
-    sqlite3_close(*db);
-    return SQLITE_OK;
-}
+// int initializeDB(sqlite3 **db){
+//     const std::string dbPath = getDBPath(CONFIG_FILE_PATH);
+//     // const std::string databasePath = "/home/elpatatone/Documents/alleno-ora/database/workouts.db";
+//     bool db_exists = checkForDB(dbPath);
+//     int sqlStatus = sqlite3_open(dbPath.c_str(), db);
+//
+//     if (sqlStatus != SQLITE_OK) {
+//         std::cerr << "Error: " <<  sqlite3_errmsg(*db) << std::endl;
+//         return sqlStatus;
+//     }
+//
+//     if (!db_exists) {
+//         std::string createWorkoutsTableQuery = "CREATE TABLE workouts ("
+//                                             "id INTEGER PRIMARY KEY,"
+//                                             "date TEXT,"
+//                                             "start_time TEXT,"
+//                                             "duration INTEGER,"
+//                                             "rating INTEGER,"
+//                                             "location TEXT"
+//                                             ");";
+//         sqlStatus = sqlite3_exec(*db, createWorkoutsTableQuery.c_str(), NULL, 0, NULL);
+//         if (sqlStatus != SQLITE_OK) {
+//             printf("Failed to create workouts table: %s\n", sqlite3_errmsg(*db));
+//             sqlite3_close(*db);
+//             return sqlStatus;
+//         }
+//
+//         std::string createExerciseTableQuery = "CREATE TABLE exercises ("
+//                                              "id INTEGER PRIMARY KEY,"
+//                                              "workout_id INTEGER,"
+//                                              "name TEXT,"
+//                                              "FOREIGN KEY(workout_id) REFERENCES workouts(id)"
+//                                              ");";
+//         sqlStatus = sqlite3_exec(*db, createExerciseTableQuery.c_str(), NULL, 0, NULL);
+//         if (sqlStatus != SQLITE_OK) {
+//             printf("Failed to create exercises table: %s\n", sqlite3_errmsg(*db));
+//             sqlite3_close(*db);
+//             return sqlStatus;
+//         }
+//
+//         std::string createSetsTableQuery = "CREATE TABLE sets ("
+//                                         "id INTEGER PRIMARY KEY,"
+//                                         "exercise_id INTEGER,"
+//                                         "set_number INTEGER,"
+//                                         "reps INTEGER,"
+//                                         "weight INTEGER,"
+//                                         "set_type TEXT,"
+//                                         "FOREIGN KEY(exercise_id) REFERENCES exercises(id)"
+//                                         ");";
+//         sqlStatus = sqlite3_exec(*db, createSetsTableQuery.c_str(), NULL, 0, NULL);
+//         if (sqlStatus != SQLITE_OK) {
+//             printf("Failed to create sets table: %s\n", sqlite3_errmsg(*db));
+//             sqlite3_close(*db);
+//             return sqlStatus;
+//         }
+//         std::cout << "Database File has been made successfully" << std::endl;
+//     }
+//     else {
+//         std::cout << "Database File already exists" << std::endl;
+//     }
+//
+//     sqlite3_close(*db);
+//     return SQLITE_OK;
+// }
 
 Workout parseFile(std::ifstream& file){
     std::string line;
@@ -241,9 +241,8 @@ int main (int argc, char *argv[]) {
             return 1;
         }
 
-        sqlite3 *db;
-        int rc = initializeDB(&db);
-
+        Database db("config.txt");
+        int rc = db.initialize();
         Workout workout = parseFile(file);
         std::cout << workout.date << std::endl;
         std::cout << workout.startTime << std::endl;
