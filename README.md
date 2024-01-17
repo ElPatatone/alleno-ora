@@ -16,6 +16,12 @@ be passed in:
 - Location
 - Rating (1 to 5)
 
+Then you can start writing the exercises done for that day.
+Write them in the format `- Exercise A`, the `-` is used to recognised which ones are
+exercises. For each exercise you can also specify if the set was a warm up, workint or back off set.
+You do not have to have all of them, if you did not do back off sets you can just omit them from the file.
+Sets are in the foramt `set number x reps number @ weight(kg) or (lbs)`
+
 ```
 Date: 2023/12/25
 Start time: 11:00
