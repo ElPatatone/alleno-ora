@@ -206,13 +206,13 @@ int Database::insertSets(const Set& set, int exerciseId) {
     return SQLStatus;
 }
 
-int Database::getWorkout(){
+int Database::getWorkout(const std::string& date){
     int openStatus = open();
     if (openStatus != SQLITE_OK) {
         return openStatus;
     }
 
-    std::string getWorkoutQuery = "SELECT * FROM workouts";
+    std::string getWorkoutQuery = "SELECT * FROM workouts WHERE date = ?";
 
     sqlite3_stmt* stmt = nullptr;
     int SQLStatus = sqlite3_prepare_v2(db, getWorkoutQuery.c_str(), -1, &stmt, nullptr);
@@ -222,11 +222,19 @@ int Database::getWorkout(){
         return SQLStatus;
     }
 
-    Workout selectedWorkout = {};
+    sqlite3_bind_text(stmt, 1, date.c_str(), -1, SQLITE_STATIC);
+
+    if (SQLStatus != SQLITE_OK) {
+        std::cerr << "[Error] Failed to bind parameters to query: " << sqlite3_errmsg(db) << "\n";
+        sqlite3_finalize(stmt);
+        return SQLStatus;
+    }
+
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         const unsigned char* date = sqlite3_column_text(stmt, 1);
         std::cout << date << "\n";
     }
+
     sqlite3_finalize(stmt);
     close();
 
