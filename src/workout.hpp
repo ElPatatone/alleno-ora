@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <string>
-
 enum SetType {
     WARM_UP_SETS,
     WORKING_SETS,
@@ -31,14 +30,18 @@ public:
     // std::string getSetType(SetType setType);
     Workout loadWorkoutData(std::ifstream& workoutFile);
 
-    const std::vector<Exercise> getExercisesVector() const;
     const std::string& getDate() const;
     const std::string& getStartTime() const;
     const std::string& getLocation() const;
     int getDuration() const;
     int getRating() const;
+    const std::vector<Exercise> getExercisesVector() const;
 
-
+    void setDate(const std::string& date);
+    void setStartTime(const std::string& startTime);
+    void setLocation(const std::string& location);
+    void setDuration(const int duration);
+    void setRating(const int rating);
 
 private:
     std::vector<Exercise> exercisesVector;

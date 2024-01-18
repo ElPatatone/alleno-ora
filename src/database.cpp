@@ -14,11 +14,10 @@ Database::~Database() {
 int Database::open() {
     int SQLStatus = sqlite3_open(dbPath.c_str(), &db);
     if (SQLStatus != SQLITE_OK) {
-        std::cout << "Failed to open database: " <<  sqlite3_errmsg(db) << std::endl;
+        std::cerr << "[Error] Failed to open database: " <<  sqlite3_errmsg(db) << "\n";
         close();
         return SQLStatus;
     }
-    std::cout << "The database was opened\n";
     return SQLStatus;
 }
 
@@ -38,7 +37,7 @@ int Database::initialize() {
         int SQLStatus = open();
 
         if (SQLStatus != SQLITE_OK) {
-            std::cerr << "Error: " << sqlite3_errmsg(db) << std::endl;
+            std::cerr << "[Error] " << sqlite3_errmsg(db) << "\n";
             close();
             return SQLStatus;
         }
@@ -53,7 +52,7 @@ int Database::initialize() {
                                             ");";
         SQLStatus = sqlite3_exec(db, createWorkoutsTableQuery.c_str(), NULL, 0, NULL);
         if (SQLStatus != SQLITE_OK) {
-            std::cout << "Failed to create workouts table: " <<  sqlite3_errmsg(db) << std::endl;
+            std::cerr << "[Error] Failed to create workouts table: " <<  sqlite3_errmsg(db) << "\n";
             close();
             return SQLStatus;
         }
@@ -66,7 +65,7 @@ int Database::initialize() {
                                              ");";
         SQLStatus = sqlite3_exec(db, createExerciseTableQuery.c_str(), NULL, 0, NULL);
         if (SQLStatus != SQLITE_OK) {
-            std::cout << "Failed to create exercises table: " <<  sqlite3_errmsg(db) << std::endl;
+            std::cerr << "[Error] Failed to create exercises table: " <<  sqlite3_errmsg(db) << "\n";
             close();
             return SQLStatus;
         }
@@ -82,14 +81,14 @@ int Database::initialize() {
                                         ");";
         SQLStatus = sqlite3_exec(db, createSetsTableQuery.c_str(), NULL, 0, NULL);
         if (SQLStatus != SQLITE_OK) {
-            std::cout << "Failed to create sets table: " <<  sqlite3_errmsg(db) << std::endl;
+            std::cerr << "[Error] Failed to create sets table: " <<  sqlite3_errmsg(db) << "\n";
             close();
             return SQLStatus;
         }
         close();
-        std::cout << "Database File has been made successfully" << std::endl;
+        std::cerr << "Database File has been made successfully\n";
     } else {
-        std::cout << "Database File already exists" << std::endl;
+        std::cerr << "Database File already exists\n";
     }
 
     return SQLITE_OK;
@@ -107,7 +106,7 @@ int Database::insertWorkout(const Workout& workout) {
     int SQLStatus = sqlite3_prepare_v2(db, insertWorkoutQuery.c_str(), -1, &stmt, nullptr);
 
     if (SQLStatus != SQLITE_OK) {
-        std::cout << "Failed to prepare statement for inserting workout: " << sqlite3_errmsg(db) << std::endl;
+        std::cerr << "[Error] Failed to prepare statement for inserting workout: " << sqlite3_errmsg(db) << "\n";
         return SQLStatus;
     }
 
@@ -120,7 +119,7 @@ int Database::insertWorkout(const Workout& workout) {
     SQLStatus = sqlite3_step(stmt);
 
     if (SQLStatus != SQLITE_DONE) {
-        std::cout << "Failed to insert workout: " << sqlite3_errmsg(db) << std::endl;
+        std::cerr << "[Error] Failed to insert workout: " << sqlite3_errmsg(db) << "\n";
         sqlite3_finalize(stmt);
         return SQLStatus;
     }
@@ -151,7 +150,7 @@ int Database::insertExercise(const Exercise& exercise, int workoutId) {
     int SQLStatus = sqlite3_prepare_v2(db, insertExercisesQuery.c_str(), -1, &stmt, nullptr);
 
     if (SQLStatus != SQLITE_OK) {
-        std::cout << "Failed to prepare statement for inserting exercises: " << sqlite3_errmsg(db) << std::endl;
+        std::cerr << "[Error] Failed to prepare statement for inserting exercises: " << sqlite3_errmsg(db) << "\n";
         return SQLStatus;
     }
 
@@ -161,7 +160,7 @@ int Database::insertExercise(const Exercise& exercise, int workoutId) {
     SQLStatus = sqlite3_step(stmt);
 
     if (SQLStatus != SQLITE_DONE) {
-        std::cout << "Failed to insert exercise: " << sqlite3_errmsg(db) << std::endl;
+        std::cerr << "[Error] Failed to insert exercise: " << sqlite3_errmsg(db) << "\n";
         sqlite3_finalize(stmt);
         return SQLStatus;
     }
@@ -185,7 +184,7 @@ int Database::insertSets(const Set& set, int exerciseId) {
     int SQLStatus = sqlite3_prepare_v2(db, insertSetsQuery.c_str(), -1, &stmt, nullptr);
 
     if (SQLStatus != SQLITE_OK) {
-        std::cout << "Failed to prepare statement for inserting sets: " << sqlite3_errmsg(db) << std::endl;
+        std::cerr << "[Error] Failed to prepare statement for inserting sets: " << sqlite3_errmsg(db) << "\n";
         return SQLStatus;
     }
 
@@ -198,11 +197,38 @@ int Database::insertSets(const Set& set, int exerciseId) {
     SQLStatus = sqlite3_step(stmt);
 
     if (SQLStatus != SQLITE_DONE) {
-        std::cout << "Failed to insert set: " << sqlite3_errmsg(db) << std::endl;
+        std::cerr << "[Error] Failed to insert set: " << sqlite3_errmsg(db) << "\n";
         sqlite3_finalize(stmt);
         return SQLStatus;
     }
 
     sqlite3_finalize(stmt);
+    return SQLStatus;
+}
+
+int Database::getWorkout(){
+    int openStatus = open();
+    if (openStatus != SQLITE_OK) {
+        return openStatus;
+    }
+
+    std::string getWorkoutQuery = "SELECT * FROM workouts";
+
+    sqlite3_stmt* stmt = nullptr;
+    int SQLStatus = sqlite3_prepare_v2(db, getWorkoutQuery.c_str(), -1, &stmt, nullptr);
+
+    if (SQLStatus != SQLITE_OK) {
+        std::cerr << "[Error] Failed to prepare statement for selecting workout: " << sqlite3_errmsg(db) << "\n";
+        return SQLStatus;
+    }
+
+    Workout selectedWorkout = {};
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        const unsigned char* date = sqlite3_column_text(stmt, 1);
+        std::cout << date << "\n";
+    }
+    sqlite3_finalize(stmt);
+    close();
+
     return SQLStatus;
 }

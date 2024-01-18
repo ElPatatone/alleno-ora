@@ -12,27 +12,47 @@ Workout::~Workout() {
 
 const std::vector<Exercise> Workout::getExercisesVector() const {
     return exercisesVector;
-};
+}
 
 const std::string& Workout::getDate() const {
     return date;
-};
+}
 
 const std::string& Workout::getStartTime() const {
     return startTime;
-};
+}
 
 const std::string& Workout::getLocation() const {
     return location;
-};
+}
 
 int Workout::getDuration() const {
     return duration;
-};
+}
 
 int Workout::getRating() const {
     return rating;
-};
+}
+
+void Workout::setDate(const std::string& date){
+    this->date = date;
+}
+
+void Workout::setStartTime(const std::string& startTime){
+    this->startTime = startTime;
+}
+
+void Workout::setLocation(const std::string& location){
+    this->location = location;
+}
+
+void Workout::setDuration(const int duration){
+    this->duration = duration;
+}
+
+void Workout::setRating(const int rating){
+    this->rating = rating;
+}
 
 std::string Set::getSetType() const {
     switch (setType) {
@@ -46,6 +66,7 @@ std::string Set::getSetType() const {
             return "Unknown";
     }
 }
+
 Workout Workout::loadWorkoutData(std::ifstream& workoutFile){
     std::string line;
     Exercise exercise;
@@ -86,7 +107,8 @@ Workout Workout::loadWorkoutData(std::ifstream& workoutFile){
                     throw std::runtime_error("[Workout File] Invalid argument during rating conversion: " + std::string(e.what()));
                 } catch (const std::out_of_range& e) {
                     throw std::runtime_error("[Workout File] Out of range error during rating conversion: " + std::string(e.what()));
-                }            }
+                }
+            }
             // Check for exercise name
             else if (line[0] == '-'){
                 if (!exercise.name.empty()) {
