@@ -113,11 +113,9 @@ Workout Workout::loadWorkoutData(std::ifstream& workoutFile){
         if (!exercise.name.empty()) {
             exercisesVector.push_back(exercise);
         }
-
         std::cout << "File parsed successfully" << std::endl;
         return *this;
     } catch (const std::exception& e) {
         throw;
     }
-
 }

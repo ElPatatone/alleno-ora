@@ -39,21 +39,24 @@ int main (int argc, char *argv[]) {
 
     try {
         if (argc == 1) {
-            throw std::runtime_error("no workout file was selected");
+            throw std::runtime_error("No workout file was selected");
             return 1;
         }
 
         std::ifstream file{argv[1]};
         if (!file.is_open()){
-            throw std::runtime_error("could not open file " + std::string(argv[1]));
+            throw std::runtime_error("Could not open file " + std::string(argv[1]));
             return 1;
         }
 
         std::string dbPath = getDBPath(CONFIG_FILE_PATH);
+
         Database db(dbPath);
-        int rc = db.initialize();
+        db.initialize();
         Workout workout = {};
         workout.loadWorkoutData(file);
+        db.insertWorkout(workout);
+
         std::cout << workout.getDate() << std::endl;
         std::cout << workout.getStartTime() << std::endl;
         std::cout << workout.getDuration() << std::endl;
@@ -71,7 +74,6 @@ int main (int argc, char *argv[]) {
                 std::cout << set.setNumber << " " << set.repsNumber << " " << set.weight << std::endl;
             }
         }
-
         return 0;
     } catch (const std::exception &e) {
         std::cerr << "[Error] " << e.what() << std::endl;

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <sqlite3.h>
+#include "workout.hpp"
 
 class Database {
 public:
@@ -13,6 +14,9 @@ public:
     void close();
     bool exists();
     int initialize();
+    int insertWorkout(const Workout& workout);
+    int insertExercise(const Exercise& exercise, int workoutId);
+    int insertSets(const Set& set, int exerciseId);
 
 private:
     std::string dbPath;

@@ -28,7 +28,7 @@ class Workout {
 public:
     Workout();
     ~Workout();
-    std::string getSetType(SetType setType);
+    // std::string getSetType(SetType setType);
     Workout loadWorkoutData(std::ifstream& workoutFile);
 
     const std::vector<Exercise> getExercisesVector() const;
