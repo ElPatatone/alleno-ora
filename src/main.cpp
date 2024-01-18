@@ -11,6 +11,7 @@ std::string getDBPath(std::string_view configPath) {
 
     if (!configFile.is_open()) {
         std::cerr << "[Config File] Config File could not be opened\n";
+        return "";
     }
 
     std::string line;
@@ -31,26 +32,24 @@ int main (int argc, char *argv[]) {
         std::cout << "File: " << argv[1] << std::endl;
     }
 
-    if (argc == 1) {
-        std::cerr << "[Error] No workout file was passed\n";
-        return 1;
-    }
-
-    std::ifstream file{argv[1]};
-    if (!file.is_open()){
-        std::cerr << "[Error] Could not open file " + std::string(argv[1]) << "\n";
-        return 1;
-    }
-
     std::string dbPath = getDBPath(CONFIG_FILE_PATH);
-
     Database db(dbPath);
     db.initialize();
 
-    Workout workout = {};
-    workout.loadWorkoutData(file);
-    db.insertWorkout(workout);
-    db.getWorkout("2023/01/18");
+    if (argc > 1) {
+        std::ifstream file{argv[1]};
+
+        if (!file.is_open()){
+            std::cerr << "[Error] Could not open file " + std::string(argv[1]) << "\n";
+            return 1;
+        } else {
+            Workout workout = {};
+            workout.loadWorkoutData(file);
+            db.insertWorkout(workout);
+        }
+    } else {
+        db.getWorkout("2023/01/18");
+    }
 
     // std::cout << workout.getDate() << std::endl;
     // std::cout << workout.getStartTime() << std::endl;

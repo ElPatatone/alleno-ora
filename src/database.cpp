@@ -1,6 +1,7 @@
 #include "database.hpp"
 #include <iostream>
 #include <filesystem>
+#include <fstream>
 #include <sqlite3.h>
 
 Database::Database(const std::string& dbPath) {
@@ -16,8 +17,7 @@ int Database::open() {
     if (SQLStatus != SQLITE_OK) {
         std::cerr << "[Error] Failed to open database: " <<  sqlite3_errmsg(db) << "\n";
         close();
-        return SQLStatus;
-    }
+        return SQLStatus; }
     return SQLStatus;
 }
 
