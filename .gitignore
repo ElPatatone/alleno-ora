@@ -1,6 +1,5 @@
 *.db
 *.out
 src/config.txt
-src/build.sh
 build/
 

@@ -1,5 +1,7 @@
 #include "database.hpp"
 #include "workout.hpp"
+#include "file.hpp"
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -23,7 +25,7 @@ std::string getDBPath(std::string_view configPath) {
         }
     }
 
-    configFile.close(); // Close the file after reading
+    configFile.close();
     return path;
 }
 
@@ -50,6 +52,9 @@ int main (int argc, char *argv[]) {
     } else {
         db.getWorkout("2023/01/18");
     }
+
+    // File newFile("test1.txt");
+    // newFile.workoutFileMaker();
 
     // std::cout << workout.getDate() << std::endl;
     // std::cout << workout.getStartTime() << std::endl;

@@ -1,0 +1,5 @@
+Date: 2023/01/19
+Start Time: 11:30
+Duration: 120
+Location: gym
+Rating: 5

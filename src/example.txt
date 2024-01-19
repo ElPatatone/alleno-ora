@@ -1,5 +1,5 @@
 Date: 2023/01/18
-Start time: 11:00
+Start Time: 11:00
 Duration: 50
 Location: Gym
 Rating: 4

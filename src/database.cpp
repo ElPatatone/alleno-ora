@@ -1,7 +1,6 @@
 #include "database.hpp"
 #include <iostream>
 #include <filesystem>
-#include <fstream>
 #include <sqlite3.h>
 
 Database::Database(const std::string& dbPath) {
