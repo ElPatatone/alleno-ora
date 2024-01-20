@@ -17,6 +17,7 @@ public:
     int insertWorkout(const Workout& workout);
     int insertExercise(const Exercise& exercise, int workoutId);
     int insertSets(const Set& set, int exerciseId);
+
     int getWorkout(const std::string& date);
 
 private:

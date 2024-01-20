@@ -1,8 +1,10 @@
 #ifndef WORKOUT_H
 #define WORKOUT_H
 
+#include <optional>
 #include <vector>
 #include <string>
+
 enum SetType {
     WARM_UP_SETS,
     WORKING_SETS,
@@ -28,19 +30,19 @@ public:
     Workout();
     ~Workout();
     // std::string getSetType(SetType setType);
-    Workout loadWorkoutData(std::ifstream& workoutFile);
+    std::optional<Workout> loadWorkoutData(std::ifstream& workoutFile);
 
     const std::string& getDate() const;
     const std::string& getStartTime() const;
     const std::string& getLocation() const;
-    int getDuration() const;
+    const std::string& getDuration() const;
     int getRating() const;
     const std::vector<Exercise> getExercisesVector() const;
 
     void setDate(const std::string& date);
     void setStartTime(const std::string& startTime);
     void setLocation(const std::string& location);
-    void setDuration(const int duration);
+    void setDuration(const std::string& duration);
     void setRating(const int rating);
 
 private:
@@ -48,7 +50,7 @@ private:
     std::string date;
     std::string startTime;
     std::string location;
-    int duration;
+    std::string duration;
     int rating;
 };
 

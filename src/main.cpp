@@ -1,7 +1,6 @@
 #include "database.hpp"
 #include "workout.hpp"
 #include "file.hpp"
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -54,13 +53,8 @@ int main (int argc, char *argv[]) {
     }
 
     // File newFile("test1.txt");
-    // newFile.workoutFileMaker();
+    // newFile.makeWorkoutFile();
 
-    // std::cout << workout.getDate() << std::endl;
-    // std::cout << workout.getStartTime() << std::endl;
-    // std::cout << workout.getDuration() << std::endl;
-    // std::cout << workout.getLocation() << std::endl;
-    // std::cout << workout.getRating() << std::endl;
     //
     // for (const auto& exercise : workout.getExercisesVector()) {
     //     std::cout << exercise.name << std::endl;

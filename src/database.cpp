@@ -45,7 +45,7 @@ int Database::initialize() {
                                             "id INTEGER PRIMARY KEY,"
                                             "date TEXT,"
                                             "start_time TEXT,"
-                                            "duration INTEGER,"
+                                            "duration TEXT,"
                                             "rating INTEGER,"
                                             "location TEXT"
                                             ");";
@@ -111,7 +111,7 @@ int Database::insertWorkout(const Workout& workout) {
 
     sqlite3_bind_text(stmt, 1, workout.getDate().c_str(), -1, SQLITE_STATIC);
     sqlite3_bind_text(stmt, 2, workout.getStartTime().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_int(stmt, 3, workout.getDuration());
+    sqlite3_bind_text(stmt, 3, workout.getDuration().c_str(), -1, SQLITE_STATIC);
     sqlite3_bind_text(stmt, 4, workout.getLocation().c_str(), -1, SQLITE_STATIC);
     sqlite3_bind_int(stmt, 5, workout.getRating());
 

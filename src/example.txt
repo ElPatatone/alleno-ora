@@ -1,8 +1,8 @@
 Date: 2023/01/18
 Start Time: 11:00
-Duration: 50
+Duration: 1h 30m
 Location: Gym
-Rating: 4
+Rating: w
 
 - Bench press
 - Strict press

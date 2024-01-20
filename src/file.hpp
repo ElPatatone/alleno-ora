@@ -8,8 +8,8 @@ public:
     File(const std::string& fileName);
     ~File();
 
-    void workoutFileMaker();
-    bool isValidDate(const std::string& date);
+    void makeWorkoutFile();
+    bool isDateValid(const std::string& date);
     Workout getUserInput();
 
 private:

@@ -1,8 +1,10 @@
 #include "workout.hpp"
 #include <fstream>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <sstream>
+#include <expected>
 
 Workout::Workout() {
 }
@@ -26,7 +28,7 @@ const std::string& Workout::getLocation() const {
     return location;
 }
 
-int Workout::getDuration() const {
+const std::string& Workout::getDuration() const {
     return duration;
 }
 
@@ -46,7 +48,7 @@ void Workout::setLocation(const std::string& location){
     this->location = location;
 }
 
-void Workout::setDuration(const int duration){
+void Workout::setDuration(const std::string& duration){
     this->duration = duration;
 }
 
@@ -67,7 +69,7 @@ std::string Set::getSetType() const {
     }
 }
 
-Workout Workout::loadWorkoutData(std::ifstream& workoutFile){
+std::optional<Workout> Workout::loadWorkoutData(std::ifstream& workoutFile){
     std::string line;
     Exercise exercise;
     Set set;
@@ -87,12 +89,10 @@ Workout Workout::loadWorkoutData(std::ifstream& workoutFile){
             }
             // Check for duration
             else if (line.find("Duration") != std::string::npos) {
-                try {
-                    duration = std::stoi(line.substr(10));
-                } catch (const std::invalid_argument& e) {
-                    throw std::runtime_error("[Workout File] Invalid argument during duration conversion: " + std::string(e.what()));
-                } catch (const std::out_of_range& e) {
-                    throw std::runtime_error("[Workout File] Out of range error during duration conversion: " + std::string(e.what()));
+                duration = line.substr(10);
+                if (duration[1] != 'h' && duration[5] != 'm') {
+                    std::cerr << "[Workout File] Workout duration is in the wrong format";
+                    return {};
                 }
             }
             // Check for location
@@ -101,13 +101,7 @@ Workout Workout::loadWorkoutData(std::ifstream& workoutFile){
             }
             // Check for rating
             else if (line.find("Rating") != std::string::npos) {
-                try {
-                    rating = std::stoi(line.substr(8));
-                } catch (const std::invalid_argument& e) {
-                    throw std::runtime_error("[Workout File] Invalid argument during rating conversion: " + std::string(e.what()));
-                } catch (const std::out_of_range& e) {
-                    throw std::runtime_error("[Workout File] Out of range error during rating conversion: " + std::string(e.what()));
-                }
+                rating = std::stoi(line.substr(8));
             }
             // Check for exercise name
             else if (line[0] == '-'){

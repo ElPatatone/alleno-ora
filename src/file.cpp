@@ -9,7 +9,7 @@ File::File(const std::string& fileName) {
 
 File::~File() {}
 
-bool File::isValidDate(const std::string& date){
+bool File::isDateValid(const std::string& date){
     if (date.size() != 10) {
         return false;
     }
@@ -29,26 +29,34 @@ Workout File::getUserInput(){
     std::string date;
     std::string start_time;
     std::string location;
-    int duration;
+    std::string duration;
     int rating;
 
     Workout workout {};
 
-    std::cout << "Please enter the (date, start time, duration, location, rating) seperated by spaces:\n";
-    std::cin >> date >> start_time >> duration >> location >> rating;
-
-    if (isValidDate(date)){
-        workout.setDate(date);
-        workout.setStartTime(start_time);
-        workout.setDuration(duration);
-        workout.setLocation(location);
-        workout.setRating(rating);
+    std::cout << "Please enter the following information:\n" << "Date: ";
+    std::cin >> date;
+    if (isDateValid(date)){
+        std::cout << "Start time: ";
+        std::cin >> start_time;
+        std::cout << "Duration: ";
+        std::cin >> duration;
     }
+    std::cout << "Location: ";
+    std::cin >> location;
+    std::cout << "Rating: ";
+    std::cin >> rating;
 
+
+    workout.setDate(date);
+    workout.setStartTime(start_time);
+    workout.setDuration(duration);
+    workout.setLocation(location);
+    workout.setRating(rating);
     return workout;
 }
 
-void File::workoutFileMaker(){
+void File::makeWorkoutFile(){
     std::ofstream workoutFile{fileName};
     Workout workout = getUserInput();
 
