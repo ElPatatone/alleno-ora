@@ -3,16 +3,18 @@
 #include "workout.hpp"
 #include <string>
 #include <fstream>
+#include <optional>
 
 class File {
 public:
     File(const std::string& fileName);
     ~File();
 
-    void makeWorkoutFile();
+    void makeWorkoutFile(Workout& workout);
     static bool isDateValid(const std::string& date);
     static bool isTimeValid(const std::string& time);
-    Workout getUserInput();
+    static bool isDurationValid(const std::string& duration);
+    std::optional<Workout> getUserInput();
 
 private:
     std::string fileName;

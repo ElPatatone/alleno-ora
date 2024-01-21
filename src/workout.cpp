@@ -5,6 +5,7 @@
 #include <optional>
 #include <string>
 #include <sstream>
+#include <limits>
 
 Workout::Workout() {
 }
@@ -96,11 +97,11 @@ std::optional<Workout> Workout::parseWorkoutFile(std::ifstream& workoutFile){
         }
         // Check for duration
         else if (line.find("Duration") != std::string::npos) {
-            duration = line.substr(10);
-            if (duration.size() != 6 || duration[1] != 'h' || duration[5] != 'm') {
+            if (!(File::isDurationValid(line.substr(10)))) {
                 std::cerr << "[Error] [Workout File] Workout duration is in the wrong format. e.g (1h 30m) \n";
                 return std::nullopt;
             }
+            duration = line.substr(12);
         }
 
         // Check for location
@@ -145,5 +146,50 @@ std::optional<Workout> Workout::parseWorkoutFile(std::ifstream& workoutFile){
         exercisesVector.push_back(exercise);
     }
     std::cout << "File parsed successfully" << std::endl;
+    return *this;
+}
+
+std::optional<Workout> Workout::getUserInput(){
+    std::cout << "Please enter the following information:\n" << "Date: ";
+    std::cin >> date;
+    if (std::cin.fail() || !(File::isDateValid(date))){
+        std::cerr << "[Error] Workout date is in the wrong format. e.g (yyyy/mm/dd) \n";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        return std::nullopt;
+    }
+
+    std::cout << "Start time: ";
+    std::cin >> startTime;
+    if (std::cin.fail() || !(File::isTimeValid(startTime))) {
+        std::cerr << "[Error] Workout time is in the wrong format. e.g (hh:mm) \n";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        return std::nullopt;
+    }
+
+    std::cout << "Duration: ";
+    std::cin >> duration;
+    if (std::cin.fail() || !(File::isDurationValid(duration))) {
+        // std::cerr << "[Error] Workout duration is in the wrong format. e.g (1h 30m) \n";
+        std::cout << "Input Duration: " << duration << std::endl;
+        bool isValid = File::isDurationValid(duration);
+        std::cout << "Is Valid: " << (isValid ? "true" : "false") << std::endl;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        return std::nullopt;
+    }
+
+    std::cout << "Location: ";
+    std::cin >> location;
+    
+    std::cout << "Rating: ";
+    std::cin >> rating;
+    if (std::cin.fail()) {
+        std::cerr << "[Error] Workout rating is not a valid integer\n";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        return std::nullopt;
+    }
     return *this;
 }

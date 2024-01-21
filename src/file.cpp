@@ -1,5 +1,4 @@
 #include "file.hpp"
-#include <fstream>
 #include <iostream>
 #include <sstream>
 
@@ -41,40 +40,28 @@ bool File::isTimeValid(const std::string& time){
     return false;
 }
 
-Workout File::getUserInput(){
-    std::string date;
-    std::string start_time;
-    std::string location;
-    std::string duration;
-    int rating;
-
-    Workout workout {};
-
-    std::cout << "Please enter the following information:\n" << "Date: ";
-    std::cin >> date;
-    if (isDateValid(date)){
-        std::cout << "Start time: ";
-        std::cin >> start_time;
-        std::cout << "Duration: ";
-        std::cin >> duration;
+bool File::isDurationValid(const std::string& duration){
+    if (duration.size() != 5) {
+        return false;
     }
-    std::cout << "Location: ";
-    std::cin >> location;
-    std::cout << "Rating: ";
-    std::cin >> rating;
 
+    int hour, minutes;
+    char h, m;
 
-    workout.setDate(date);
-    workout.setStartTime(start_time);
-    workout.setDuration(duration);
-    workout.setLocation(location);
-    workout.setRating(rating);
-    return workout;
+    std::istringstream stream(duration);
+    if (stream >> hour >> h >> minutes >> m && stream.eof()) {
+        if (hour < 0 || hour > 23 || minutes < 0 || minutes > 59) {
+            return false;
+        }
+        return true;
+    }
+    return false;
 }
 
-void File::makeWorkoutFile(){
+
+void File::makeWorkoutFile(Workout& workout){
     std::ofstream workoutFile{fileName};
-    Workout workout = getUserInput();
+    workout.getUserInput();
 
     if (workoutFile.is_open()){
         workoutFile << "Date: " << workout.getDate() << '\n';

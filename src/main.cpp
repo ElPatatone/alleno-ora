@@ -1,4 +1,5 @@
 #include "database.hpp"
+#include "file.hpp"
 #include "workout.hpp"
 #include <iostream>
 #include <fstream>
@@ -55,8 +56,9 @@ int main (int argc, char *argv[]) {
         db.getWorkout("2021/11/08");
     }
 
-    // File newFile("test1.txt");
-    // newFile.makeWorkoutFile();
+    File newFile("test1.txt");
+    Workout testWorkout{};
+    newFile.makeWorkoutFile(testWorkout);
 
     //
     // for (const auto& exercise : workout.getExercisesVector()) {

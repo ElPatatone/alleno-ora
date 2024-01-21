@@ -31,6 +31,7 @@ public:
     ~Workout();
 
     std::optional<Workout> parseWorkoutFile(std::ifstream& workoutFile);
+    std::optional<Workout> getUserInput();
 
     const std::string& getDate() const;
     const std::string& getStartTime() const;
