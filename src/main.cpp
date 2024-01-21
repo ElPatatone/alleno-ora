@@ -1,12 +1,12 @@
 #include "database.hpp"
 #include "workout.hpp"
-#include "file.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sqlite3.h>
 
 const std::string CONFIG_FILE_PATH = "config.txt";
+
 std::string getDBPath(std::string_view configPath) {
     std::ifstream configFile{configPath.data()};
 
@@ -45,11 +45,14 @@ int main (int argc, char *argv[]) {
             return 1;
         } else {
             Workout workout = {};
-            workout.loadWorkoutData(file);
-            db.insertWorkout(workout);
+            if (workout.parseWorkoutFile(file)) {
+                db.insertWorkout(workout);
+            } else {
+                std::cerr << "[Error] Fail to parse file, please try again.\n";
+            }
         }
     } else {
-        db.getWorkout("2023/01/18");
+        db.getWorkout("2021/11/08");
     }
 
     // File newFile("test1.txt");

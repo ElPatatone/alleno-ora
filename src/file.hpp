@@ -2,6 +2,7 @@
 #define FILE_H
 #include "workout.hpp"
 #include <string>
+#include <fstream>
 
 class File {
 public:
@@ -9,11 +10,13 @@ public:
     ~File();
 
     void makeWorkoutFile();
-    bool isDateValid(const std::string& date);
+    static bool isDateValid(const std::string& date);
+    static bool isTimeValid(const std::string& time);
     Workout getUserInput();
 
 private:
     std::string fileName;
+    std::ifstream file;
 };
 
 #endif

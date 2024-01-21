@@ -1,13 +1,13 @@
-Date: 2023/01/18
-Start Time: 11:00
+Date: 2021/11/08
+Start Time: 1s:00
 Duration: 1h 30m
 Location: Gym
-Rating: w
+Rating: 22
 
 - Bench press
 - Strict press
     Warm up sets
-        1 x 10 @ 20kg
+        e x 10 @ 20kg
         1 x 10 @ 20kg
         2 x 6 @ 40kg
 - Push press

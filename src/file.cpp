@@ -3,9 +3,7 @@
 #include <iostream>
 #include <sstream>
 
-File::File(const std::string& fileName) {
-    this->fileName = fileName;
-}
+File::File(const std::string& fileName) : fileName(fileName), file(fileName) {}
 
 File::~File() {}
 
@@ -21,8 +19,26 @@ bool File::isDateValid(const std::string& date){
         if (day < 1 || day > 31 || month < 1 || month > 12 || year < 2000 || year > 9999){
             return false;
         }
+        return true;
     }
-    return true;
+    return false;
+}
+
+bool File::isTimeValid(const std::string& time){
+    if (time.size() != 5) {
+        return false;
+    }
+
+    int hour, minutes;
+    char columns;
+    std::istringstream stream(time);
+    if (stream >> hour >> columns >> minutes && stream.eof()) {
+        if (hour < 0 || hour > 23 || minutes < 0 || minutes > 59) {
+            return false;
+        }
+        return true;
+    }
+    return false;
 }
 
 Workout File::getUserInput(){

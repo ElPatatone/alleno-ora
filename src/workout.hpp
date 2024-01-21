@@ -29,8 +29,8 @@ class Workout {
 public:
     Workout();
     ~Workout();
-    // std::string getSetType(SetType setType);
-    std::optional<Workout> loadWorkoutData(std::ifstream& workoutFile);
+
+    std::optional<Workout> parseWorkoutFile(std::ifstream& workoutFile);
 
     const std::string& getDate() const;
     const std::string& getStartTime() const;
