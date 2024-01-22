@@ -42,22 +42,41 @@ bool File::isTimeValid(const std::string& time){
 
 bool File::isDurationValid(const std::string& duration){
     if (duration.size() != 5) {
+        std::cerr << "[Error] Invalid duration length: " << duration << std::endl;
         return false;
     }
 
-    int hour, minutes;
-    char h, m;
-
-    std::istringstream stream(duration);
-    if (stream >> hour >> h >> minutes >> m && stream.eof()) {
-        if (hour < 0 || hour > 23 || minutes < 0 || minutes > 59) {
-            return false;
-        }
-        return true;
+    if (duration[1] != 'h' || duration[4] != 'm') {
+        return false;
     }
-    return false;
+
+    return true;
 }
 
+// bool File::isDurationValid(const std::string& duration){
+//     if (duration.size() != 5) {
+//         std::cerr << "[Error] Invalid duration length: " << duration << std::endl;
+//         return false;
+//     }
+//
+//     int hour, minutes;
+//     char character;
+//
+//     std::istringstream stream(duration);
+//
+//     if (stream >> hour >> character >> minutes >> character) {
+//         if (stream.eof()) {
+//             if (hour < 0 || hour > 23 || minutes < 0 || minutes > 59) {
+//                 std::cerr << "[Error] Invalid duration range: " << duration << std::endl;
+//                 return false;
+//             }
+//             std::cerr << "Valid duration" << duration << std::endl;
+//             return true;
+//         }
+//     }
+//     std::cerr << "returns here" << duration << std::endl;
+//     return false;
+// }
 
 void File::makeWorkoutFile(Workout& workout){
     std::ofstream workoutFile{fileName};

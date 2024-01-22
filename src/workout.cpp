@@ -97,11 +97,16 @@ std::optional<Workout> Workout::parseWorkoutFile(std::ifstream& workoutFile){
         }
         // Check for duration
         else if (line.find("Duration") != std::string::npos) {
+
+            // duration = line.substr(10);
             if (!(File::isDurationValid(line.substr(10)))) {
-                std::cerr << "[Error] [Workout File] Workout duration is in the wrong format. e.g (1h 30m) \n";
+            
+            // }
+            // if (duration.size() != 5 || duration[1] != 'h' || duration[4] != 'm') {
+                std::cerr << "[Error] [Workout File] Workout duration is in the wrong format. e.g (1h30m) \n";
                 return std::nullopt;
             }
-            duration = line.substr(12);
+            duration = line.substr(10);
         }
 
         // Check for location
@@ -152,7 +157,7 @@ std::optional<Workout> Workout::parseWorkoutFile(std::ifstream& workoutFile){
 std::optional<Workout> Workout::getUserInput(){
     std::cout << "Please enter the following information:\n" << "Date: ";
     std::cin >> date;
-    if (std::cin.fail() || !(File::isDateValid(date))){
+    if (std::cin.fail() || !File::isDateValid(date)){
         std::cerr << "[Error] Workout date is in the wrong format. e.g (yyyy/mm/dd) \n";
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -161,7 +166,7 @@ std::optional<Workout> Workout::getUserInput(){
 
     std::cout << "Start time: ";
     std::cin >> startTime;
-    if (std::cin.fail() || !(File::isTimeValid(startTime))) {
+    if (std::cin.fail() || !File::isTimeValid(startTime)) {
         std::cerr << "[Error] Workout time is in the wrong format. e.g (hh:mm) \n";
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -170,11 +175,9 @@ std::optional<Workout> Workout::getUserInput(){
 
     std::cout << "Duration: ";
     std::cin >> duration;
-    if (std::cin.fail() || !(File::isDurationValid(duration))) {
-        // std::cerr << "[Error] Workout duration is in the wrong format. e.g (1h 30m) \n";
+    if (std::cin.fail() || !File::isDurationValid(duration)) {
         std::cout << "Input Duration: " << duration << std::endl;
-        bool isValid = File::isDurationValid(duration);
-        std::cout << "Is Valid: " << (isValid ? "true" : "false") << std::endl;
+        std::cerr << "[Error] Workout duration is in the wrong format. e.g (1h30m) \n";
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return std::nullopt;
@@ -182,7 +185,7 @@ std::optional<Workout> Workout::getUserInput(){
 
     std::cout << "Location: ";
     std::cin >> location;
-    
+
     std::cout << "Rating: ";
     std::cin >> rating;
     if (std::cin.fail()) {
