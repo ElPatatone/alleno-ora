@@ -48,10 +48,14 @@ bool File::isDurationValid(const std::string& duration){
 
     if (duration[1] != 'h' || duration[4] != 'm') {
         return false;
+    } else if (!std::isdigit(duration[0]) || !std::isdigit(duration[2]) || !std::isdigit(duration[3])) {
+        return false;
     }
 
     return true;
 }
+
+// Note: This does not work for some reason, it should as the isTimeValid function with the same logic is working properly
 
 // bool File::isDurationValid(const std::string& duration){
 //     if (duration.size() != 5) {

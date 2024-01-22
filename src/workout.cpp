@@ -100,9 +100,6 @@ std::optional<Workout> Workout::parseWorkoutFile(std::ifstream& workoutFile){
 
             // duration = line.substr(10);
             if (!(File::isDurationValid(line.substr(10)))) {
-            
-            // }
-            // if (duration.size() != 5 || duration[1] != 'h' || duration[4] != 'm') {
                 std::cerr << "[Error] [Workout File] Workout duration is in the wrong format. e.g (1h30m) \n";
                 return std::nullopt;
             }
