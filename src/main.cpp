@@ -30,37 +30,40 @@ std::string getDBPath(std::string_view configPath) {
 }
 
 int main (int argc, char *argv[]) {
-    if (argc == 2) {
-        std::cout << "File: " << argv[1] << std::endl;
+    if (argc == 3) {
+        std::cout << "File: " << argv[2] << std::endl;
     }
 
     std::string dbPath = getDBPath(CONFIG_FILE_PATH);
     Database db(dbPath);
     db.initialize();
 
-    if (argc > 1) {
-        std::ifstream file{argv[1]};
+    if (argc >= 2) {
+        std::string flag = argv[1];
+        if (flag == "-s") {
+            std::ifstream file{argv[2]};
 
-        if (!file.is_open()){
-            std::cerr << "[Error] Could not open file " + std::string(argv[1]) << "\n";
-            return 1;
-        } else {
-            Workout workout = {};
-            if (workout.parseWorkoutFile(file)) {
-                db.insertWorkout(workout);
+            if (!file.is_open()){
+                std::cerr << "[Error] Could not open file " + std::string(argv[2]) << "\n";
+                return 1;
             } else {
-                std::cerr << "[Error] Fail to parse file, please try again.\n";
+                Workout workout = {};
+                if (workout.parseWorkoutFile(file)) {
+                    db.insertWorkout(workout);
+                } else {
+                    std::cerr << "[Error] Failed to parse file, please try again.\n";
+                }
             }
         }
-    } else {
-        db.getWorkout("2021/11/08");
+
+        if (flag == "-c") {
+            File newFile("test1.txt");
+            Workout testWorkout{};
+            newFile.makeWorkoutFile(testWorkout);
+        }
     }
 
-    File newFile("test1.txt");
-    Workout testWorkout{};
-    newFile.makeWorkoutFile(testWorkout);
 
-    //
     // for (const auto& exercise : workout.getExercisesVector()) {
     //     std::cout << exercise.name << std::endl;
     //     std::string printedSetType = "";  // Variable to track printed set type for the current exercise
