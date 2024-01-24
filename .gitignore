@@ -1,6 +1,10 @@
 *.db
 *.out
-src/config.txt
+src/*.txt
+src/*.out
 build/
 *.norg
+.
+
+
 
