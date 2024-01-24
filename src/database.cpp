@@ -1,10 +1,9 @@
-#include "database.hpp"
+#include "include/database.hpp"
 #include <iostream>
 #include <filesystem>
 #include <sqlite3.h>
 
-Database::Database(const std::string& dbPath) {
-    this->dbPath = dbPath;
+Database::Database(const std::string& dbPath) : db(nullptr), dbPath(dbPath) {
 }
 
 Database::~Database() {

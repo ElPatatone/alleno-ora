@@ -1,4 +1,4 @@
-#include "file.hpp"
+#include "include/file.hpp"
 #include <iostream>
 #include <sstream>
 
@@ -42,7 +42,6 @@ bool File::isTimeValid(const std::string& time){
 
 bool File::isDurationValid(const std::string& duration){
     if (duration.size() != 5) {
-        std::cerr << "[Error] Invalid duration length: " << duration << std::endl;
         return false;
     }
 
@@ -55,7 +54,7 @@ bool File::isDurationValid(const std::string& duration){
     return true;
 }
 
-// Note: This does not work for some reason, it should as the isTimeValid function with the same logic is working properly
+// DEBUG: This does not work for some reason, it should as the isTimeValid function with the same logic is working properly
 
 // bool File::isDurationValid(const std::string& duration){
 //     if (duration.size() != 5) {
@@ -82,7 +81,7 @@ bool File::isDurationValid(const std::string& duration){
 //     return false;
 // }
 
-void File::makeWorkoutFile(Workout& workout){
+void File::makeWorkoutFileHeader(Workout& workout){
     std::ofstream workoutFile{fileName};
     workout.getUserInput();
 

@@ -1,8 +1,0 @@
-{:/home/elpatatone/Documents/notes/work/index:** Alleno-ora CLI}[Alleno-ora]
-TODO
-
-( ) implement cmd option to pass in the config.txt file to the program instead of hard coding the path for it.
-( ) add cmd option to load workout data from the db and create a file in the right format
-
-
-

@@ -1,5 +1,5 @@
-#include "workout.hpp"
-#include "file.hpp"
+#include "include/workout.hpp"
+#include "include/file.hpp"
 #include <fstream>
 #include <iostream>
 #include <optional>
@@ -97,8 +97,6 @@ std::optional<Workout> Workout::parseWorkoutFile(std::ifstream& workoutFile){
         }
         // Check for duration
         else if (line.find("Duration") != std::string::npos) {
-
-            // duration = line.substr(10);
             if (!(File::isDurationValid(line.substr(10)))) {
                 std::cerr << "[Error] [Workout File] Workout duration is in the wrong format. e.g (1h30m) \n";
                 return std::nullopt;
@@ -117,6 +115,9 @@ std::optional<Workout> Workout::parseWorkoutFile(std::ifstream& workoutFile){
 
             if (pos != line.substr(8).length()) {
                 std::cerr << "[Error] [Workout File] Workout rating is not a valid integer\n";
+                return std::nullopt;
+            } else if (rating < 1 || rating > 5) {
+                std::cerr << "[Error] Workout rating is not in the range of 1 to 5\n";
                 return std::nullopt;
             }
         }
@@ -173,7 +174,6 @@ std::optional<Workout> Workout::getUserInput(){
     std::cout << "Duration: ";
     std::cin >> duration;
     if (std::cin.fail() || !File::isDurationValid(duration)) {
-        std::cout << "Input Duration: " << duration << std::endl;
         std::cerr << "[Error] Workout duration is in the wrong format. e.g (1h30m) \n";
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -190,6 +190,11 @@ std::optional<Workout> Workout::getUserInput(){
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return std::nullopt;
-    }
+    } else if (rating < 1 || rating > 5) {
+            std::cerr << "[Error] Workout rating is not in the range of 1 to 5\n";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            return std::nullopt;
+        }
     return *this;
 }

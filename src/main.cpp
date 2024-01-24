@@ -1,6 +1,6 @@
-#include "database.hpp"
-#include "file.hpp"
-#include "workout.hpp"
+#include "include/database.hpp"
+#include "include/file.hpp"
+#include "include/workout.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -43,7 +43,7 @@ int main (int argc, char *argv[]) {
 
             if (!file.is_open()){
                 std::cerr << "[Error] Could not open file " + std::string(argv[2]) << "\n";
-                std::cerr << "[Error] Please make sure the file already exists" << "\n";
+                std::cerr << "[Error] Please make sure the file already exists\n";
                 return 1;
             } else {
                 Workout workout = {};
@@ -57,37 +57,21 @@ int main (int argc, char *argv[]) {
         }
 
         if (arg == "-c") {
-            File newFile("test1.txt");
-            Workout testWorkout{};
-            newFile.makeWorkoutFile(testWorkout);
-        }
-    }
-
-    if (argc >= 2) {
-        std::string flag = argv[1];
-        if (flag == "-s") {
-            std::ifstream file{argv[2]};
-
-            if (!file.is_open()){
-                std::cerr << "[Error] Could not open file " + std::string(argv[2]) << "\n";
+            if (argv[2] == NULL) {
+                std::cerr << "[Error] Please make sure to pass in a name for the new workout file\n";
                 return 1;
-            } else {
-                Workout workout = {};
-                if (workout.parseWorkoutFile(file)) {
-                    db.insertWorkout(workout);
-                } else {
-                    std::cerr << "[Error] Failed to parse file, please try again.\n";
-                }
             }
+            std::string newWorkoutFile = std::string(argv[2]);
+            File newFile(newWorkoutFile);
+            Workout newWorkout{};
+            newFile.makeWorkoutFileHeader(newWorkout);
         }
 
-        if (flag == "-c") {
-            File newFile("test1.txt");
-            Workout testWorkout{};
-            newFile.makeWorkoutFile(testWorkout);
+        if (arg == "-h" || arg == "--help") {
+            std::cout << "Will add a help section soon\n";
+            return 1;
         }
     }
-
 
     // for (const auto& exercise : workout.getExercisesVector()) {
     //     std::cout << exercise.name << std::endl;
