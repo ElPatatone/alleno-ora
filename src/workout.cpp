@@ -10,9 +10,7 @@
 Workout::Workout() {
 }
 
-Workout::~Workout() {
-}
-
+Workout::~Workout() { }
 const std::vector<Exercise> Workout::getExercisesVector() const {
     return exercisesVector;
 }
@@ -130,6 +128,7 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
             exercise = Exercise();
             exercise.name = line.substr(2);
         }
+        // Check for set type.
         else if (line.find("Warm up sets") != std::string::npos) {
             set.setType = WARM_UP_SETS;
         } else if (line.find("Working sets") != std::string::npos) {
@@ -137,6 +136,7 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
         } else if (line.find("Back off sets") != std::string::npos) {
             set.setType = BACK_OFF_SETS;
         } else if (line.find("@") != std::string::npos) {
+            // Check for set information. number of sets, reps and weight done
             std::istringstream stream{line};
             char token;
             stream >> set.setNumber >> token >> set.repsNumber >> token >> set.weight;

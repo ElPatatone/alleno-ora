@@ -40,6 +40,7 @@ int Database::initialize() {
             return SQLStatus;
         }
 
+        // workouts table
         std::string createWorkoutsTableQuery = "CREATE TABLE workouts ("
                                             "id INTEGER PRIMARY KEY,"
                                             "date TEXT,"
@@ -55,6 +56,7 @@ int Database::initialize() {
             return SQLStatus;
         }
 
+        // exercise table
         std::string createExerciseTableQuery = "CREATE TABLE exercises ("
                                              "id INTEGER PRIMARY KEY,"
                                              "workout_id INTEGER,"
@@ -68,6 +70,7 @@ int Database::initialize() {
             return SQLStatus;
         }
 
+        // set table
         std::string createSetsTableQuery = "CREATE TABLE sets ("
                                         "id INTEGER PRIMARY KEY,"
                                         "exercise_id INTEGER,"
@@ -125,6 +128,7 @@ int Database::insertWorkout(const Workout& workout) {
     // Retrieve the last inserted workout ID
     int workoutId = sqlite3_last_insert_rowid(db);
 
+    // main loop to make sure the individual exercises and their sets are all linked with the right workout_id
     for (const auto& exercise : workout.getExercisesVector()) {
         int exerciseId = insertExercise(exercise, workoutId);
         for (const auto& set: exercise.setsVector) {
@@ -167,7 +171,7 @@ int Database::insertExercise(const Exercise& exercise, int workoutId) {
     int exerciseId = sqlite3_last_insert_rowid(db);
 
     sqlite3_finalize(stmt);
-    return exerciseId;  // Return the exercise ID
+    return exerciseId;
 }
 
 int Database::insertSets(const Set& set, int exerciseId) {

@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include <sqlite3.h>
+#include <unordered_set>
 
 const std::string CONFIG_FILE_PATH = "config.txt";
 
@@ -37,8 +38,30 @@ int main (int argc, char *argv[]) {
     Database db(dbPath);
     db.initialize();
 
-    for (int i = 0; i < args.size(); i++) {
-        if (args[i] == "-s") {
+    std::unordered_set<std::string_view> validOptions = {"-s", "-c", "-h", "--help", "--save", "--create"};
+
+    // Hanlding case where multiple options are passed.
+    int count = 0;
+    for (const auto& arg : args) {
+        if (validOptions.find(arg) != validOptions.end()) {
+            count++;
+        }
+    }
+
+    if (count > 1) {
+        std::cerr << "[Error] More than one option specified.\n";
+        return 1;
+    }
+
+    // Handling cases where 1 options is passed and their respective logics.
+    for (int i = 0; i < args.size() - 1; i++) {
+        if (args[i] == args[i + 1]) {
+            std::cout << "[Error] Cannot use the same option twice\n";
+            return 1;
+        }
+
+        // -s and --save option, save the workout information in the database.
+        if (args[i] == "-s" || args[i] == "--save") {
             std::ifstream workoutFile{std::string(args[i + 1])};
 
             if (!workoutFile.is_open()){
@@ -56,19 +79,19 @@ int main (int argc, char *argv[]) {
             }
         }
 
-        if (args[i] == "-c") {
+        // -c and --create option, create a new workout file by prompting the user for header information for the workout.
+        if (args[i] == "-c" || args[i] == "--create") {
             if (args[i + 1] == "") {
                 std::cerr << "[Error] Please make sure to pass in a name for the new workout file\n";
                 return 1;
             }
             else {
-                std::string newWorkoutFile = std::string(args[i + 1]);
-                File newFile(newWorkoutFile);
+                std::string fileName = std::string(args[i + 1]);
+                File newFile(fileName);
                 Workout newWorkout{};
                 newFile.makeWorkoutFileHeader(newWorkout);
             }
         }
-
     }
 
     // for (const auto& exercise : workout.getExercisesVector()) {
