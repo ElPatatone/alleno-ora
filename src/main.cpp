@@ -30,13 +30,38 @@ std::string getDBPath(std::string_view configPath) {
 }
 
 int main (int argc, char *argv[]) {
-    if (argc == 3) {
-        std::cout << "File: " << argv[2] << std::endl;
-    }
+    // Command line parsing
+    std::vector<std::string_view> args(argv + 1, argv + argc);
 
     std::string dbPath = getDBPath(CONFIG_FILE_PATH);
     Database db(dbPath);
     db.initialize();
+
+    for (const auto& arg : args) {
+        if (arg == "-s") {
+            std::ifstream file{argv[2]};
+
+            if (!file.is_open()){
+                std::cerr << "[Error] Could not open file " + std::string(argv[2]) << "\n";
+                std::cerr << "[Error] Please make sure the file already exists" << "\n";
+                return 1;
+            } else {
+                Workout workout = {};
+                if (workout.parseWorkoutFile(file)) {
+                    db.insertWorkout(workout);
+                } else {
+                    std::cerr << "[Error] Failed to parse file, please try again.\n";
+                    return 1;
+                }
+            }
+        }
+
+        if (arg == "-c") {
+            File newFile("test1.txt");
+            Workout testWorkout{};
+            newFile.makeWorkoutFile(testWorkout);
+        }
+    }
 
     if (argc >= 2) {
         std::string flag = argv[1];
