@@ -37,17 +37,17 @@ int main (int argc, char *argv[]) {
     Database db(dbPath);
     db.initialize();
 
-    for (const auto& arg : args) {
-        if (arg == "-s") {
-            std::ifstream file{argv[2]};
+    for (int i = 0; i < args.size(); i++) {
+        if (args[i] == "-s") {
+            std::ifstream workoutFile{std::string(args[i + 1])};
 
-            if (!file.is_open()){
-                std::cerr << "[Error] Could not open file " + std::string(argv[2]) << "\n";
+            if (!workoutFile.is_open()){
+                std::cerr << "[Error] Could not open file " + std::string(args[i + 1]) << "\n";
                 std::cerr << "[Error] Please make sure the file already exists\n";
                 return 1;
             } else {
                 Workout workout = {};
-                if (workout.parseWorkoutFile(file)) {
+                if (workout.parseWorkoutData(workoutFile)) {
                     db.insertWorkout(workout);
                 } else {
                     std::cerr << "[Error] Failed to parse file, please try again.\n";
@@ -56,21 +56,19 @@ int main (int argc, char *argv[]) {
             }
         }
 
-        if (arg == "-c") {
-            if (argv[2] == NULL) {
+        if (args[i] == "-c") {
+            if (args[i + 1] == "") {
                 std::cerr << "[Error] Please make sure to pass in a name for the new workout file\n";
                 return 1;
             }
-            std::string newWorkoutFile = std::string(argv[2]);
-            File newFile(newWorkoutFile);
-            Workout newWorkout{};
-            newFile.makeWorkoutFileHeader(newWorkout);
+            else {
+                std::string newWorkoutFile = std::string(args[i + 1]);
+                File newFile(newWorkoutFile);
+                Workout newWorkout{};
+                newFile.makeWorkoutFileHeader(newWorkout);
+            }
         }
 
-        if (arg == "-h" || arg == "--help") {
-            std::cout << "Will add a help section soon\n";
-            return 1;
-        }
     }
 
     // for (const auto& exercise : workout.getExercisesVector()) {

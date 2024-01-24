@@ -30,7 +30,7 @@ public:
     Workout();
     ~Workout();
 
-    std::optional<Workout> parseWorkoutFile(std::ifstream& workoutFile);
+    std::optional<Workout> parseWorkoutData(std::ifstream& workoutFile);
     std::optional<Workout> getUserInput();
 
     const std::string& getDate() const;

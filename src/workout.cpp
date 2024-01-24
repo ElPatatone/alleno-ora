@@ -70,7 +70,7 @@ std::string Set::getSetType() const {
     }
 }
 
-std::optional<Workout> Workout::parseWorkoutFile(std::ifstream& workoutFile){
+std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
     std::string line;
     Exercise exercise;
     Set set;
@@ -148,6 +148,7 @@ std::optional<Workout> Workout::parseWorkoutFile(std::ifstream& workoutFile){
     if (!exercise.name.empty()) {
         exercisesVector.push_back(exercise);
     }
+    workoutFile.close();
     std::cout << "File parsed successfully" << std::endl;
     return *this;
 }
