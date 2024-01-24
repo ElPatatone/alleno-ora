@@ -1,10 +1,8 @@
 *.db
-*.out
 src/*.txt
-src/*.out
+src/alleno
 build/
 *.norg
-.
 
 
 
