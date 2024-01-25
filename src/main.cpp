@@ -49,12 +49,13 @@ int main (int argc, char *argv[]) {
     }
 
     if (count > 1) {
-        std::cerr << "[Error] More than one option specified.\n";
+        std::cerr << "[Error] More than one option was specified.\n";
+        std::cerr << "[Error] Please only pass in one option at a time.\n";
         return 1;
     }
 
     // Handling cases where 1 options is passed and their respective logics.
-    for (int i = 0; i < args.size() - 1; i++) {
+    for (auto i = 0; i < args.size() - 1; i++) {
         if (args[i] == args[i + 1]) {
             std::cout << "[Error] Cannot use the same option twice\n";
             return 1;

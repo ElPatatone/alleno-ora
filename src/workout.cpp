@@ -64,7 +64,7 @@ std::string Set::getSetType() const {
         case BACK_OFF_SETS:
             return "Back off sets";
         default:
-            return "Unknown";
+            return "UNKNOWN";
     }
 }
 

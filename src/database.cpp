@@ -11,6 +11,9 @@ Database::~Database() {
 }
 
 int Database::open() {
+    // the sqlite3_open() function is causing memory leaks.
+    // I am not sure what is going on as the error is not descriptive.
+    // This could be an issue with the actual sqlite3 lib and not my code (it is most likely me...).
     int SQLStatus = sqlite3_open(dbPath.c_str(), &db);
     if (SQLStatus != SQLITE_OK) {
         std::cerr << "[Error] Failed to open database: " <<  sqlite3_errmsg(db) << "\n";
