@@ -19,6 +19,7 @@ struct Set {
     int weight;
 
     std::string getSetType() const;
+    SetType convertStringToSetType(const std::string& setType);
     // initialising default values as this was causing memory leaks shown on valgrind. 
     // issue was: Conditional jump or move depends on uninitialised value(s)
     Set() : setNumber(0), repsNumber(0), weight(0), setType(UNKNOWN_SETS) {}
@@ -27,6 +28,8 @@ struct Set {
 struct Exercise {
     std::string name;
     std::vector<Set> setsVector;
+
+    void addSet(int setNumber, int repsNumber, int weight, const std::string& setType);
 };
 
 class Workout {
@@ -42,7 +45,9 @@ public:
     const std::string& getLocation() const;
     const std::string& getDuration() const;
     int getRating() const;
-    const std::vector<Exercise> getExercisesVector() const;
+
+    const std::vector<Exercise>& getExercisesVector() const;
+    const std::vector<Exercise>& addExercisesToVector(const Exercise& exercise);
 
     void setDate(const std::string& date);
     void setStartTime(const std::string& startTime);

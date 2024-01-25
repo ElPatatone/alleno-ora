@@ -38,7 +38,7 @@ int main (int argc, char *argv[]) {
     Database db(dbPath);
     db.initialize();
 
-    std::unordered_set<std::string_view> validOptions = {"-s", "-c", "-h", "--help", "--save", "--create"};
+    std::unordered_set<std::string_view> validOptions = {"-s", "-c", "-h", "-g", "--help", "--save", "--create", "--get"};
 
     // Hanlding case where multiple options are passed.
     int count = 0;
@@ -54,8 +54,16 @@ int main (int argc, char *argv[]) {
         return 1;
     }
 
+    // check for no option being passed.
+    if (args.size() == 0) {
+        std::cerr << "[Error] No option was passed.\n";
+        std::cerr << "[Error] Make sure to pass in an option.\n";
+        return 1;
+    }
+
     // Handling cases where 1 options is passed and their respective logics.
-    for (auto i = 0; i < args.size() - 1; i++) {
+    for (int i = 0; i < args.size(); i++) {
+
         if (args[i] == args[i + 1]) {
             std::cout << "[Error] Cannot use the same option twice\n";
             return 1;
@@ -91,6 +99,26 @@ int main (int argc, char *argv[]) {
                 File newFile(fileName);
                 Workout newWorkout{};
                 newFile.makeWorkoutFileHeader(newWorkout);
+            }
+        }
+
+        // -c and --get option, get the workout data for a date given by the user. Then save the information to a file.
+        if (args[i] == "-g" || args[i] == "--get") {
+            if (args[i + 1] == "") {
+                std::cerr << "[Error] Please make sure to pass in the date of the workout to fetch its data.\n";
+                return 1;
+            }
+            else {
+                std::string date = std::string(args[i + 1]);
+                auto fetchedWorkoutOptional = db.getWorkout(date);
+                if (fetchedWorkoutOptional.has_value()) {
+                    File newFile("fetched_workout.txt");
+                    Workout fetchedWorkout = fetchedWorkoutOptional.value();
+                    newFile.makeFetchedWorkoutFile(fetchedWorkout);
+                } else {
+                    std::cerr << "[Error] Workout not found for the specified date\n";
+                    return 1;
+                }
             }
         }
     }

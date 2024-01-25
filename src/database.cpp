@@ -117,8 +117,8 @@ int Database::insertWorkout(const Workout& workout) {
     sqlite3_bind_text(stmt, 1, workout.getDate().c_str(), -1, SQLITE_STATIC);
     sqlite3_bind_text(stmt, 2, workout.getStartTime().c_str(), -1, SQLITE_STATIC);
     sqlite3_bind_text(stmt, 3, workout.getDuration().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 4, workout.getLocation().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_int(stmt, 5, workout.getRating());
+    sqlite3_bind_int(stmt, 4, workout.getRating());
+    sqlite3_bind_text(stmt, 5, workout.getLocation().c_str(), -1, SQLITE_STATIC);
 
     SQLStatus = sqlite3_step(stmt);
 
@@ -211,37 +211,125 @@ int Database::insertSets(const Set& set, int exerciseId) {
     return SQLStatus;
 }
 
-int Database::getWorkout(const std::string& date){
+std::optional<Workout> Database::getWorkout(const std::string& date) {
     int openStatus = open();
     if (openStatus != SQLITE_OK) {
-        return openStatus;
+        return std::nullopt;
     }
 
     std::string getWorkoutQuery = "SELECT * FROM workouts WHERE date = ?";
-
     sqlite3_stmt* stmt = nullptr;
     int SQLStatus = sqlite3_prepare_v2(db, getWorkoutQuery.c_str(), -1, &stmt, nullptr);
 
     if (SQLStatus != SQLITE_OK) {
         std::cerr << "[Error] Failed to prepare statement for selecting workout: " << sqlite3_errmsg(db) << "\n";
-        return SQLStatus;
+        close();
+        return std::nullopt;
     }
 
-    sqlite3_bind_text(stmt, 1, date.c_str(), -1, SQLITE_STATIC);
+    SQLStatus = sqlite3_bind_text(stmt, 1, date.c_str(), -1, SQLITE_STATIC);
 
     if (SQLStatus != SQLITE_OK) {
         std::cerr << "[Error] Failed to bind parameters to query: " << sqlite3_errmsg(db) << "\n";
         sqlite3_finalize(stmt);
-        return SQLStatus;
+        close();
+        return std::nullopt;
+    }
+
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        Workout workout;
+
+        // Populate workout details
+        workout.setDate(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)));
+        workout.setStartTime(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
+        workout.setDuration(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
+        workout.setRating(sqlite3_column_int(stmt, 4));
+        workout.setLocation(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5)));
+
+        // Fetch exercises for the workout
+        getExercisesForWorkout(sqlite3_column_int(stmt, 0), workout);
+
+        sqlite3_finalize(stmt);
+        close();
+        return std::make_optional(workout);
+    } else {
+        std::cerr << "[Error] No workout found for the given date.\n";
+        sqlite3_finalize(stmt);
+        close();
+        return std::nullopt;
+    }
+}
+
+void Database::getExercisesForWorkout(int workoutId, Workout& workout) {
+    std::string getExercisesQuery = "SELECT id, name FROM exercises WHERE workout_id = ?";
+    sqlite3_stmt* stmt = nullptr;
+    int SQLStatus = sqlite3_prepare_v2(db, getExercisesQuery.c_str(), -1, &stmt, nullptr);
+
+    if (SQLStatus != SQLITE_OK) {
+        std::cerr << "[Error] Failed to prepare statement for selecting exercises: " << sqlite3_errmsg(db) << "\n";
+        return;
+    }
+
+    SQLStatus = sqlite3_bind_int(stmt, 1, workoutId);
+
+    if (SQLStatus != SQLITE_OK) {
+        std::cerr << "[Error] Failed to bind parameters to query: " << sqlite3_errmsg(db) << "\n";
+        sqlite3_finalize(stmt);
+        return;
     }
 
     while (sqlite3_step(stmt) == SQLITE_ROW) {
-        const unsigned char* date = sqlite3_column_text(stmt, 1);
-        std::cout << date << "\n";
+        int exerciseId = sqlite3_column_int(stmt, 0);
+        std::string exerciseName = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+
+        Exercise exercise;
+        exercise.name = exerciseName;
+
+        // Fetch sets for the exercise
+        getSetsForExercise(exerciseId, exercise);
+
+        workout.addExercisesToVector(exercise);
+    }
+
+    sqlite3_finalize(stmt);
+}
+
+void Database::getSetsForExercise(int exerciseId, Exercise& exercise) {
+    int openStatus = open();
+    if (openStatus != SQLITE_OK) {
+        return;
+    }
+
+    std::string getSetsQuery = "SELECT set_number, reps, weight, set_type FROM sets WHERE exercise_id = ?";
+
+    sqlite3_stmt* stmt = nullptr;
+    int SQLStatus = sqlite3_prepare_v2(db, getSetsQuery.c_str(), -1, &stmt, nullptr);
+
+    if (SQLStatus != SQLITE_OK) {
+        std::cerr << "[Error] Failed to prepare statement for selecting sets: " << sqlite3_errmsg(db) << "\n";
+        close();
+        return;
+    }
+
+    SQLStatus = sqlite3_bind_int(stmt, 1, exerciseId);
+
+    if (SQLStatus != SQLITE_OK) {
+        std::cerr << "[Error] Failed to bind parameters to query: " << sqlite3_errmsg(db) << "\n";
+        sqlite3_finalize(stmt);
+        close();
+        return;
+    }
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        int setNumber = sqlite3_column_int(stmt, 0);
+        int reps = sqlite3_column_int(stmt, 1);
+        int weight = sqlite3_column_int(stmt, 2);
+        std::string setType = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+
+        // Create a Set object, initialize with the fetched values and add it to the exercise
+        exercise.addSet(setNumber, reps, weight, setType);
     }
 
     sqlite3_finalize(stmt);
     close();
-
-    return SQLStatus;
 }

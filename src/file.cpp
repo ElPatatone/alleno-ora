@@ -54,7 +54,7 @@ bool File::isDurationValid(const std::string& duration){
     return true;
 }
 
-// DEBUG: This does not work for some reason, it should as the isTimeValid function with the same logic is working properly
+// ISSUE: This does not work for some reason, it should as the isTimeValid function with the same logic is working properly
 
 // bool File::isDurationValid(const std::string& duration){
 //     if (duration.size() != 5) {
@@ -93,4 +93,21 @@ void File::makeWorkoutFileHeader(Workout& workout){
         workoutFile << "Rating: " << workout.getRating() << '\n';
     }
     workoutFile.close();
+}
+
+void File::makeFetchedWorkoutFile(const Workout& workout) {
+    std::cout << "Date: " << workout.getDate() << "\n";
+    std::cout << "Start Time: " << workout.getStartTime() << "\n";
+    std::cout << "Duration: " << workout.getDuration() << "\n";
+    std::cout << "Location: " << workout.getLocation() << "\n";
+    std::cout << "Rating: " << workout.getRating() << "\n\n";
+
+    for (const auto& exercise : workout.getExercisesVector()) {
+        std::cout << "- " << exercise.name << "\n";
+
+        for (const auto& set : exercise.setsVector) {
+            std::cout << "\t" << set.getSetType() << "\n";
+            std::cout << "\t\t" << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg\n";
+        }
+    }
 }

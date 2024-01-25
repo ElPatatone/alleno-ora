@@ -18,7 +18,9 @@ public:
     int insertExercise(const Exercise& exercise, int workoutId);
     int insertSets(const Set& set, int exerciseId);
 
-    int getWorkout(const std::string& date);
+    std::optional<Workout> getWorkout(const std::string& date);
+    void getExercisesForWorkout(int workoutId, Workout& workout);
+    void getSetsForExercise(int exerciseId, Exercise& exercise);
 
 private:
     std::string dbPath;

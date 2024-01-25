@@ -11,7 +11,8 @@ Workout::Workout() {
 }
 
 Workout::~Workout() { }
-const std::vector<Exercise> Workout::getExercisesVector() const {
+
+const std::vector<Exercise>& Workout::getExercisesVector() const {
     return exercisesVector;
 }
 
@@ -55,6 +56,11 @@ void Workout::setRating(const int rating){
     this->rating = rating;
 }
 
+const std::vector<Exercise>& Workout::addExercisesToVector(const Exercise& newExercise) {
+    this->exercisesVector.push_back(newExercise);
+    return exercisesVector;
+}
+
 std::string Set::getSetType() const {
     switch (setType) {
         case WARM_UP_SETS:
@@ -64,8 +70,31 @@ std::string Set::getSetType() const {
         case BACK_OFF_SETS:
             return "Back off sets";
         default:
-            return "UNKNOWN";
+            return "Unknown";
     }
+}
+
+SetType Set::convertStringToSetType(const std::string& setType) {
+    if (setType == "Warm up sets") {
+        return WARM_UP_SETS;
+    } else if (setType == "Working sets") {
+        return WORKING_SETS;
+    } else if (setType == "Back off sets") {
+        return BACK_OFF_SETS;
+    } else {
+        // Default to UNKNOWN_SETS if the string is not recognized
+        std::cerr << "[Warning] Unknown set type: " << setType << "\n";
+        return UNKNOWN_SETS;
+    }
+}
+
+void Exercise::addSet(int setNumber, int repsNumber, int weight, const std::string& setType) {
+    Set set;
+    set.setNumber = setNumber;
+    set.repsNumber = repsNumber;
+    set.weight = weight;
+    set.setType = set.convertStringToSetType(setType);
+    setsVector.push_back(set);
 }
 
 std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
