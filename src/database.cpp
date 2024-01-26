@@ -253,7 +253,6 @@ std::optional<Workout> Database::getWorkout(const std::string& date) {
         close();
         return std::make_optional(workout);
     } else {
-        std::cerr << "[Error] No workout found for the given date.\n";
         sqlite3_finalize(stmt);
         close();
         return std::nullopt;

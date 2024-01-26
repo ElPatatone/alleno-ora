@@ -96,18 +96,32 @@ void File::makeWorkoutFileHeader(Workout& workout){
 }
 
 void File::makeFetchedWorkoutFile(const Workout& workout) {
-    std::cout << "Date: " << workout.getDate() << "\n";
-    std::cout << "Start Time: " << workout.getStartTime() << "\n";
-    std::cout << "Duration: " << workout.getDuration() << "\n";
-    std::cout << "Location: " << workout.getLocation() << "\n";
-    std::cout << "Rating: " << workout.getRating() << "\n\n";
+    std::ofstream fetchedWorkoutFile{fileName};
 
-    for (const auto& exercise : workout.getExercisesVector()) {
-        std::cout << "- " << exercise.name << "\n";
+    if (!fetchedWorkoutFile.is_open()){
+        std::cerr << "[Error] File could not be opened for writing.\n";
+    } else {
+        // Write the header for the file
+        fetchedWorkoutFile << "Date: " << workout.getDate() << '\n';
+        fetchedWorkoutFile << "Start Time: " << workout.getStartTime() << '\n';
+        fetchedWorkoutFile << "Duration: " << workout.getDuration() << '\n';
+        fetchedWorkoutFile << "Location: " << workout.getLocation() << '\n';
+        fetchedWorkoutFile << "Rating: " << workout.getRating() << "\n\n";
 
-        for (const auto& set : exercise.setsVector) {
-            std::cout << "\t" << set.getSetType() << "\n";
-            std::cout << "\t\t" << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg\n";
+        // Write the exercise names and the sets for each exercise.
+        for (const auto& exercise : workout.getExercisesVector()) {
+            fetchedWorkoutFile << "- " << exercise.name << '\n';
+            std::string printedSetType = "";  // Variable to track printed set type for the current exercise
+            for (const auto& set : exercise.setsVector) {
+                if (set.getSetType() != printedSetType) {
+                    fetchedWorkoutFile << '\t' << set.getSetType() << '\n';
+                    printedSetType = set.getSetType();
+                }
+                fetchedWorkoutFile << "\t\t" << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg\n";
+            }
         }
     }
+    std::cout << "File has been made successfully\n";
+
+    fetchedWorkoutFile.close();
 }

@@ -110,30 +110,26 @@ int main (int argc, char *argv[]) {
             }
             else {
                 std::string date = std::string(args[i + 1]);
-                auto fetchedWorkoutOptional = db.getWorkout(date);
-                if (fetchedWorkoutOptional.has_value()) {
-                    File newFile("fetched_workout.txt");
-                    Workout fetchedWorkout = fetchedWorkoutOptional.value();
-                    newFile.makeFetchedWorkoutFile(fetchedWorkout);
-                } else {
-                    std::cerr << "[Error] Workout not found for the specified date\n";
+                if (!File::isDateValid(date)) {
+                    std::cerr << "[Error] Date value is in the wrong format. e.g (yyyy/mm/dd)\n";
                     return 1;
+                } else {
+                    // get the workout from the database. If the function fails to return a value the fetchedWorkoutOptional will have value of nullopt.
+                    auto fetchedWorkoutOptional = db.getWorkout(date);
+                    if (fetchedWorkoutOptional.has_value()) {
+                        std::string fileName = std::string(args[i + 1]);
+                        File newFile("test.txt");
+                        Workout fetchedWorkout = fetchedWorkoutOptional.value();
+                        newFile.makeFetchedWorkoutFile(fetchedWorkout);
+                    } else {
+                        std::cerr << "[Error] No workout found for the date: " << std::string(args[i + 1]) << "\n";
+                        std::cerr << "[Error] Please make sure the workout already exists in the database.\n";
+                        return 1;
+                    }
                 }
             }
         }
     }
-
-    // for (const auto& exercise : workout.getExercisesVector()) {
-    //     std::cout << exercise.name << std::endl;
-    //     std::string printedSetType = "";  // Variable to track printed set type for the current exercise
-    //     for (const auto& set : exercise.setsVector) {
-    //         if (set.getSetType() != printedSetType) {
-    //             std::cout << set.getSetType() << std::endl;
-    //             printedSetType = set.getSetType();
-    //         }
-    //         std::cout << set.setNumber << " " << set.repsNumber << " " << set.weight << std::endl;
-    //     }
-    // }
 
     return 0;
 }

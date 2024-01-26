@@ -20,6 +20,7 @@ struct Set {
 
     std::string getSetType() const;
     SetType convertStringToSetType(const std::string& setType);
+
     // initialising default values as this was causing memory leaks shown on valgrind. 
     // issue was: Conditional jump or move depends on uninitialised value(s)
     Set() : setNumber(0), repsNumber(0), weight(0), setType(UNKNOWN_SETS) {}
