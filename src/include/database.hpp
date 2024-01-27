@@ -23,8 +23,8 @@ public:
     void getSetsForExercise(int exerciseId, Exercise& exercise);
 
 private:
-    std::string dbPath;
     sqlite3* db;
+    std::string dbPath;
 };
 
 #endif

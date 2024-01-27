@@ -62,7 +62,7 @@ int main (int argc, char *argv[]) {
     }
 
     // Handling cases where 1 options is passed and their respective logics.
-    for (int i = 0; i < args.size(); i++) {
+    for (size_t i = 0; i < args.size(); i++) {
 
         if (args[i] == args[i + 1]) {
             std::cout << "[Error] Cannot use the same option twice\n";
