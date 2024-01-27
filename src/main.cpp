@@ -30,6 +30,20 @@ std::string getDBPath(std::string_view configPath) {
     return path;
 }
 
+void helpSection(){
+    std::cout << "[Usage]: Alleno [OPTIONS]\n"
+              << "Options:\n"
+              << "  -s, --save   Save workout information to the database.\n"
+              << "  -c, --create Create a new file with a workout header after inputting the information.\n"
+              << "  -g, --get    Get workout information for a given date and save it to a file.\n"
+              << "  -h, --help   Show the help section.\n"
+              << "Examples:\n"
+              << "  ./alleno -s workout.txt\n"
+              << "  ./alleno -c new_workout\n"
+              << "  ./alleno -g 2024/01/15\n"
+              << "  ./alleno -h\n";
+}
+
 int main (int argc, char *argv[]) {
     // Command line parsing
     std::vector<std::string_view> args(argv + 1, argv + argc);
@@ -40,11 +54,16 @@ int main (int argc, char *argv[]) {
 
     std::unordered_set<std::string_view> validOptions = {"-s", "-c", "-h", "-g", "--help", "--save", "--create", "--get"};
 
-    // Hanlding case where multiple options are passed.
+    // Hanlding case where multiple options are passed or where no options are passed.
     int count = 0;
     for (const auto& arg : args) {
         if (validOptions.find(arg) != validOptions.end()) {
             count++;
+        }
+        if (validOptions.find(arg) == validOptions.end()) {
+            std::cerr << "[Error] No options were passed in.\n";
+            std::cerr << "[Error] Please make sure to pass it at least one option to use the CLI tool.\n";
+            return 1;
         }
     }
 
@@ -66,6 +85,11 @@ int main (int argc, char *argv[]) {
 
         if (args[i] == args[i + 1]) {
             std::cout << "[Error] Cannot use the same option twice\n";
+            return 1;
+        }
+
+        if (args[i] == "-h" || args[i] == "--help") {
+            helpSection();
             return 1;
         }
 
