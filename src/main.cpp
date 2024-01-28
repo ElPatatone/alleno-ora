@@ -9,6 +9,7 @@
 
 const std::string CONFIG_FILE_PATH = "config.txt";
 
+// Helper function to conver the date in the right format to be used to make the file name.
 std::string convertDate(const std::string& date) {
     std::string convertedDate = date;
     convertedDate[4] = '_';
@@ -29,8 +30,35 @@ std::string getDBPath(std::string_view configPath) {
     std::string path;
 
     while (getline(configFile, line)) {
-        if (!line.empty()) {
-            path = line;
+        if (line.empty()) {
+            continue;
+        }
+        else if (line.find("db") != std::string::npos){
+            path = line.substr(5);
+        }
+    }
+
+    configFile.close();
+    return path;
+}
+
+std::string getDirectoryForFiles(const std::string& configPath) {
+    std::ifstream configFile{configPath.data()};
+
+    if (!configFile.is_open()) {
+        std::cerr << "[Config File] Config File could not be opened\n";
+        return "";
+    }
+
+    std::string line;
+    std::string path;
+
+    while (getline(configFile, line)) {
+        if (line.empty()) {
+            continue;
+        }
+        else if (line.find("workouts") != std::string::npos){
+            path = line.substr(11);
         }
     }
 
@@ -53,10 +81,11 @@ void helpSection(){
 }
 
 int main (int argc, char *argv[]) {
-    // Command line parsing
+    // Creating a vector to contain all the arguments passed into the program.
     std::vector<std::string_view> args(argv + 1, argv + argc);
 
     std::string dbPath = getDBPath(CONFIG_FILE_PATH);
+    std::string workoutsPath = getDirectoryForFiles(CONFIG_FILE_PATH);
     Database db(dbPath);
     db.initialize();
 
@@ -91,6 +120,7 @@ int main (int argc, char *argv[]) {
             return 1;
         }
 
+        // -h and --help, show the help section and the list of usable commands
         if (args[i] == "-h" || args[i] == "--help") {
             helpSection();
             return 1;
@@ -98,7 +128,7 @@ int main (int argc, char *argv[]) {
 
         // -s and --save option, save the workout information in the database.
         if (args[i] == "-s" || args[i] == "--save") {
-            std::ifstream workoutFile{std::string(args[i + 1])};
+            std::ifstream workoutFile{getDirectoryForFiles(CONFIG_FILE_PATH) + std::string(args[i + 1])};
 
             if (!workoutFile.is_open()){
                 std::cerr << "[Error] Could not open file " + std::string(args[i + 1]) << "\n";
@@ -106,6 +136,7 @@ int main (int argc, char *argv[]) {
                 return 1;
             } else {
                 Workout workout = {};
+                // If something is returned after parsing the file, insert the workout into the database.
                 if (workout.parseWorkoutData(workoutFile)) {
                     db.insertWorkout(workout);
                 } else {
@@ -144,7 +175,8 @@ int main (int argc, char *argv[]) {
                     // get the workout from the database. If the function fails to return a value the fetchedWorkoutOptional will have value of nullopt.
                     auto fetchedWorkoutOptional = db.getWorkout(date);
                     if (fetchedWorkoutOptional.has_value()) {
-                        std::string fileName = convertDate(date) + ".txt";
+                        // appending the workout file name to the directory where the user has chosen to store these files
+                        std::string fileName = workoutsPath + convertDate(date) + ".txt";
                         File newFile(fileName);
                         Workout fetchedWorkout = fetchedWorkoutOptional.value();
                         newFile.makeFetchedWorkoutFile(fetchedWorkout);

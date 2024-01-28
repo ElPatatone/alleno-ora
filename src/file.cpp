@@ -15,7 +15,7 @@ bool File::isDateValid(const std::string& date){
     char slash;
     std::istringstream stream(date);
     if (stream >> year >> slash >> month >> slash >> day && stream.eof()) {
-        if (day < 1 || day > 31 || month < 1 || month > 12 || year < 2000 || year > 9999){
+        if (day < 1 || day > 31 || month < 1 || month > 12 || year < 2000 || year > 9999 || slash != '/'){
             return false;
         }
         return true;
@@ -32,7 +32,7 @@ bool File::isTimeValid(const std::string& time){
     char columns;
     std::istringstream stream(time);
     if (stream >> hour >> columns >> minutes && stream.eof()) {
-        if (hour < 0 || hour > 23 || minutes < 0 || minutes > 59) {
+        if (hour < 0 || hour > 23 || minutes < 0 || minutes > 59 || columns != ':') {
             return false;
         }
         return true;
