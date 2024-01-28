@@ -228,3 +228,4 @@ std::optional<Workout> Workout::getUserInput(){
         }
     return *this;
 }
+

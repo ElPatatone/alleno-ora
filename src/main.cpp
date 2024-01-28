@@ -9,6 +9,14 @@
 
 const std::string CONFIG_FILE_PATH = "config.txt";
 
+std::string convertDate(const std::string& date) {
+    std::string convertedDate = date;
+    convertedDate[4] = '_';
+    convertedDate[7] = '_';
+
+    return convertedDate;
+}
+
 std::string getDBPath(std::string_view configPath) {
     std::ifstream configFile{configPath.data()};
 
@@ -60,11 +68,6 @@ int main (int argc, char *argv[]) {
         if (validOptions.find(arg) != validOptions.end()) {
             count++;
         }
-        if (validOptions.find(arg) == validOptions.end()) {
-            std::cerr << "[Error] No options were passed in.\n";
-            std::cerr << "[Error] Please make sure to pass it at least one option to use the CLI tool.\n";
-            return 1;
-        }
     }
 
     if (count > 1) {
@@ -73,10 +76,10 @@ int main (int argc, char *argv[]) {
         return 1;
     }
 
-    // check for no option being passed.
-    if (args.size() == 0) {
-        std::cerr << "[Error] No option was passed.\n";
-        std::cerr << "[Error] Make sure to pass in an option.\n";
+    if (count == 0) {
+        std::cerr << "[Error] No valid option was passed in.\n";
+        std::cerr << "[Error] Please make sure to pass it at least one option to use the CLI tool.\n";
+        std::cerr << "[Error] Use ./alleno -h to see the list of possible commands.\n";
         return 1;
     }
 
@@ -141,8 +144,8 @@ int main (int argc, char *argv[]) {
                     // get the workout from the database. If the function fails to return a value the fetchedWorkoutOptional will have value of nullopt.
                     auto fetchedWorkoutOptional = db.getWorkout(date);
                     if (fetchedWorkoutOptional.has_value()) {
-                        std::string fileName = std::string(args[i + 1]);
-                        File newFile("test.txt");
+                        std::string fileName = convertDate(date) + ".txt";
+                        File newFile(fileName);
                         Workout fetchedWorkout = fetchedWorkoutOptional.value();
                         newFile.makeFetchedWorkoutFile(fetchedWorkout);
                     } else {
