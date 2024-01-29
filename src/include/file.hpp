@@ -13,9 +13,11 @@ public:
     void makeWorkoutFileHeader(Workout& workout);
     void makeFetchedWorkoutFile(const Workout& workout);
 
+    // made this static to allow usage without needing an instance of the File class. Should maybe move this.
     static bool isDateValid(const std::string& date);
     static bool isTimeValid(const std::string& time);
     static bool isDurationValid(const std::string& duration);
+
     std::optional<Workout> getUserInput();
 
 private:

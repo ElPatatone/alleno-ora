@@ -7,8 +7,7 @@
 #include <sstream>
 #include <limits>
 
-Workout::Workout() {
-}
+Workout::Workout() {}
 
 Workout::~Workout() { }
 
@@ -98,6 +97,7 @@ void Exercise::addSet(int setNumber, int repsNumber, int weight, const std::stri
     setsVector.push_back(set);
 }
 
+// Parse the workout file for the data and then return the workout instance with those values.
 std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
     std::string line;
     Exercise exercise;
@@ -171,14 +171,8 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
             char token;
             stream >> set.setNumber >> token >> set.repsNumber >> token >> set.weight;
 
-            // Check if it is a PR.
+            // Check if it is a PR. If it is found it will return true if not false.
             set.isPR = (line.find("(PR)") != std::string::npos);
-
-            // Remove "(PR)" from the line so it is not inserted into the database
-            // size_t prPosition = line.find("(PR)");
-            // if (prPosition != std::string::npos) {
-            //     line.erase(prPosition, 4);
-            // }
 
             exercise.addSet(set.setNumber, set.repsNumber, set.weight, set.getSetType(), set.isPR);
         }
@@ -193,6 +187,7 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
     return *this;
 }
 
+// get user input for the header of the file, then return the workout instance with those values.
 std::optional<Workout> Workout::getUserInput(){
     std::cout << "Please enter the following information:\n" << "Date: ";
     std::cin >> date;

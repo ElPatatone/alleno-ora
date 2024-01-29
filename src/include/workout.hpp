@@ -49,7 +49,7 @@ public:
     int getRating() const;
 
     const std::vector<Exercise>& getExercisesVector() const;
-    const std::vector<Exercise>& addExercisesToVector(const Exercise& exercise);
+    const std::vector<Exercise>& addExercisesToVector(const Exercise& newExercise);
 
     void setDate(const std::string& date);
     void setStartTime(const std::string& startTime);
