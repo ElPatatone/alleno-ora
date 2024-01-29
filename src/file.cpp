@@ -119,6 +119,7 @@ void File::makeFetchedWorkoutFile(const Workout& workout) {
                 }
                 fetchedWorkoutFile << "\t\t" << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg\n";
             }
+            fetchedWorkoutFile << "\n";
         }
     }
     std::cout << "File has been made successfully\n";
