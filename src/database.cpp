@@ -81,6 +81,7 @@ int Database::initialize() {
                                         "reps INTEGER,"
                                         "weight INTEGER,"
                                         "set_type TEXT,"
+                                        "is_pr INTEGER,"
                                         "FOREIGN KEY(exercise_id) REFERENCES exercises(id)"
                                         ");";
         SQLStatus = sqlite3_exec(db, createSetsTableQuery.c_str(), NULL, 0, NULL);
@@ -183,7 +184,7 @@ int Database::insertSets(const Set& set, int exerciseId) {
         return openStatus;
     }
 
-    std::string insertSetsQuery = "INSERT INTO sets (exercise_id, set_number, reps, weight, set_type) VALUES (?, ?, ?, ?, ?)";
+    std::string insertSetsQuery = "INSERT INTO sets (exercise_id, set_number, reps, weight, set_type, is_pr) VALUES (?, ?, ?, ?, ?, ?)";
 
     sqlite3_stmt* stmt = nullptr;
     int SQLStatus = sqlite3_prepare_v2(db, insertSetsQuery.c_str(), -1, &stmt, nullptr);
@@ -198,6 +199,7 @@ int Database::insertSets(const Set& set, int exerciseId) {
     sqlite3_bind_int(stmt, 3, set.repsNumber);
     sqlite3_bind_int(stmt, 4, set.weight);
     sqlite3_bind_text(stmt, 5, set.getSetType().c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 6, set.isPR);
 
     SQLStatus = sqlite3_step(stmt);
 
@@ -299,7 +301,7 @@ void Database::getSetsForExercise(int exerciseId, Exercise& exercise) {
         return;
     }
 
-    std::string getSetsQuery = "SELECT set_number, reps, weight, set_type FROM sets WHERE exercise_id = ?";
+    std::string getSetsQuery = "SELECT set_number, reps, weight, set_type, is_pr FROM sets WHERE exercise_id = ?";
 
     sqlite3_stmt* stmt = nullptr;
     int SQLStatus = sqlite3_prepare_v2(db, getSetsQuery.c_str(), -1, &stmt, nullptr);
@@ -324,9 +326,10 @@ void Database::getSetsForExercise(int exerciseId, Exercise& exercise) {
         int reps = sqlite3_column_int(stmt, 1);
         int weight = sqlite3_column_int(stmt, 2);
         std::string setType = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+        bool isPR = sqlite3_column_int(stmt, 4);
 
         // Create a Set object, initialize with the fetched values and add it to the exercise
-        exercise.addSet(setNumber, reps, weight, setType);
+        exercise.addSet(setNumber, reps, weight, setType, isPR);
     }
 
     sqlite3_finalize(stmt);

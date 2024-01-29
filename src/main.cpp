@@ -175,10 +175,11 @@ int main (int argc, char *argv[]) {
                     // get the workout from the database. If the function fails to return a value the fetchedWorkoutOptional will have value of nullopt.
                     auto fetchedWorkoutOptional = db.getWorkout(date);
                     if (fetchedWorkoutOptional.has_value()) {
+                        // as a value was returned, assign that to an actual workout instance.
+                        Workout fetchedWorkout = fetchedWorkoutOptional.value();
                         // appending the workout file name to the directory where the user has chosen to store these files
                         std::string fileName = workoutsPath + convertDate(date) + ".txt";
                         File newFile(fileName);
-                        Workout fetchedWorkout = fetchedWorkoutOptional.value();
                         newFile.makeFetchedWorkoutFile(fetchedWorkout);
                     } else {
                         std::cerr << "[Error] No workout found for the date: " << std::string(args[i + 1]) << "\n";

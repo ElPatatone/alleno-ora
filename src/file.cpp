@@ -117,7 +117,11 @@ void File::makeFetchedWorkoutFile(const Workout& workout) {
                     fetchedWorkoutFile << '\t' << set.getSetType() << '\n';
                     printedSetType = set.getSetType();
                 }
-                fetchedWorkoutFile << "\t\t" << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg\n";
+                if (set.isPR) {
+                    fetchedWorkoutFile << "\t\t" << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg (PR)\n";
+                } else {
+                    fetchedWorkoutFile << "\t\t" << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg\n";
+                }
             }
             fetchedWorkoutFile << "\n";
         }

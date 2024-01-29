@@ -88,12 +88,13 @@ SetType Set::convertStringToSetType(const std::string& setType) {
     }
 }
 
-void Exercise::addSet(int setNumber, int repsNumber, int weight, const std::string& setType) {
+void Exercise::addSet(int setNumber, int repsNumber, int weight, const std::string& setType, bool isPR) {
     Set set;
     set.setNumber = setNumber;
     set.repsNumber = repsNumber;
     set.weight = weight;
     set.setType = set.convertStringToSetType(setType);
+    set.isPR = isPR;
     setsVector.push_back(set);
 }
 
@@ -169,7 +170,17 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
             std::istringstream stream{line};
             char token;
             stream >> set.setNumber >> token >> set.repsNumber >> token >> set.weight;
-            exercise.setsVector.push_back(set);
+
+            // Check if it is a PR.
+            set.isPR = (line.find("(PR)") != std::string::npos);
+
+            // Remove "(PR)" from the line so it is not inserted into the database
+            // size_t prPosition = line.find("(PR)");
+            // if (prPosition != std::string::npos) {
+            //     line.erase(prPosition, 4);
+            // }
+
+            exercise.addSet(set.setNumber, set.repsNumber, set.weight, set.getSetType(), set.isPR);
         }
     }
 

@@ -17,20 +17,21 @@ struct Set {
     int setNumber;
     int repsNumber;
     int weight;
+    bool isPR;
 
     std::string getSetType() const;
     SetType convertStringToSetType(const std::string& setType);
 
     // initialising default values as this was causing memory leaks shown on valgrind. 
     // issue was: Conditional jump or move depends on uninitialised value(s)
-    Set() :  setType(UNKNOWN_SETS), setNumber(0), repsNumber(0), weight(0) {}
+    Set() :  setType(UNKNOWN_SETS), setNumber(0), repsNumber(0), weight(0), isPR(false) {}
 };
 
 struct Exercise {
     std::string name;
     std::vector<Set> setsVector;
 
-    void addSet(int setNumber, int repsNumber, int weight, const std::string& setType);
+    void addSet(int setNumber, int repsNumber, int weight, const std::string& setType, bool isPR);
 };
 
 class Workout {
