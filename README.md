@@ -2,7 +2,7 @@
 
 This CLI tool is meant to make it easier to store and access workout information.
 It parses a workout file that is in a specific format and will then store that information in a sqlite
-database, you can also get retrieve workout information from the database by giving a specific date, this will then be saved into a file for you to view.
+database, you can also retrieve workout information from the database by giving a specific date, this will then be saved into a file for you to view.
 
 ## Example workout file
 
@@ -29,7 +29,7 @@ Rating: 3
         3 x 10 @ 18kg
 ```
 
-Above you can see the example file. At the top there is a header consisting of 5 fields that will need to
+Above you can see the example file, the indententations do not affect the parsing but are there for better readablity. At the top there is a header consisting of 5 fields that will need to
 be passed in:
 
 - Date (**e.g yyyy/mm/dd**)
@@ -69,7 +69,7 @@ alleno --get 2024/01/30
 
 #### -c and --create
 
-This will take in user input and create a new workout file with the header filled in with the given inputs.
+This will take in user input and create a new workout file with the header filled in with the given inputs. Make sure to pass in the name for the file as well including the `.txt` extension.
 Header includes: date, start time, duration, locatin, rating.
 e.g:
 
