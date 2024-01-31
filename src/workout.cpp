@@ -1,5 +1,5 @@
-#include "include/workout.hpp"
-#include "include/file.hpp"
+#include "../include/workout.hpp"
+#include "../include/file.hpp"
 #include <fstream>
 #include <iostream>
 #include <optional>

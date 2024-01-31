@@ -1,4 +1,4 @@
-#include "include/database.hpp"
+#include "../include/database.hpp"
 #include <iostream>
 #include <filesystem>
 #include <sqlite3.h>

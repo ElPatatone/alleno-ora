@@ -1,6 +1,6 @@
-#include "include/database.hpp"
-#include "include/file.hpp"
-#include "include/workout.hpp"
+#include "../include/database.hpp"
+#include "../include/file.hpp"
+#include "../include/workout.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
