@@ -1,6 +1,4 @@
-#ifndef WORKOUT_H
-#define WORKOUT_H
-
+#pragma once
 #include <optional>
 #include <vector>
 #include <string>
@@ -13,18 +11,18 @@ enum SetType {
 };
 
 struct Set {
-    SetType setType;
-    int setNumber;
-    int repsNumber;
-    int weight;
-    bool isPR;
+    SetType setType = UNKNOWN_SETS;
+    int setNumber = 0;
+    int repsNumber = 0;
+    int weight = 0;
+    bool isPR = false;
 
     std::string getSetType() const;
     SetType convertStringToSetType(const std::string& setType);
 
     // initialising default values as this was causing memory leaks shown on valgrind. 
     // issue was: Conditional jump or move depends on uninitialised value(s)
-    Set() :  setType(UNKNOWN_SETS), setNumber(0), repsNumber(0), weight(0), isPR(false) {}
+    // Set() :  setType(UNKNOWN_SETS), setNumber(0), repsNumber(0), weight(0), isPR(false) {}
 };
 
 struct Exercise {
@@ -36,8 +34,8 @@ struct Exercise {
 
 class Workout {
 public:
-    Workout();
-    ~Workout();
+    Workout() = default;
+    ~Workout() = default;
 
     std::optional<Workout> parseWorkoutData(std::ifstream& workoutFile);
     std::optional<Workout> getUserInput();
@@ -65,5 +63,3 @@ private:
     std::string duration;
     int rating;
 };
-
-#endif

@@ -84,8 +84,8 @@ int main (int argc, char *argv[]) {
     // Creating a vector to contain all the arguments passed into the program.
     std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    std::string dbPath = getDBPath(CONFIG_FILE_PATH);
-    std::string workoutsPath = getDirectoryForFiles(CONFIG_FILE_PATH);
+    const std::string dbPath = getDBPath(CONFIG_FILE_PATH);
+    const std::string workoutsPath = getDirectoryForFiles(CONFIG_FILE_PATH);
     Database db(dbPath);
     db.initialize();
 

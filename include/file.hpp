@@ -8,7 +8,7 @@
 class File {
 public:
     File(const std::string& fileName);
-    ~File();
+    ~File() = default;
 
     void makeWorkoutFileHeader(Workout& workout);
     void makeFetchedWorkoutFile(const Workout& workout);

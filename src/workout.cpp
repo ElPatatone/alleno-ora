@@ -7,10 +7,6 @@
 #include <sstream>
 #include <limits>
 
-Workout::Workout() {}
-
-Workout::~Workout() { }
-
 const std::vector<Exercise>& Workout::getExercisesVector() const {
     return exercisesVector;
 }

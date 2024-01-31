@@ -4,8 +4,6 @@
 
 File::File(const std::string& fileName) : fileName(fileName), file(fileName) {}
 
-File::~File() {}
-
 bool File::isDateValid(const std::string& date){
     if (date.size() != 10) {
         return false;
