@@ -1,2 +1,0 @@
-db - /home/elpatatone/Documents/alleno-ora/database/workouts.db
-workouts - /home/elpatatone/Documents/workouts/

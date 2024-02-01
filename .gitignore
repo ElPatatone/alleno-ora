@@ -2,6 +2,7 @@
 src/*.txt
 src/alleno
 *.norg
+build/
 *.json
 
 
