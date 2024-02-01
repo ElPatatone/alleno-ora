@@ -1,8 +1,7 @@
 *.db
 src/*.txt
 src/alleno
-build/
 *.norg
-
+*.json
 
 

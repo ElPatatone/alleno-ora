@@ -1,5 +1,4 @@
-#ifndef FILE_H
-#define FILE_H
+#pragma once
 #include "workout.hpp"
 #include <string>
 #include <fstream>
@@ -24,5 +23,3 @@ private:
     std::string fileName;
     std::ifstream file;
 };
-
-#endif
