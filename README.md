@@ -43,6 +43,7 @@ exercises.
 Each exercise can have multiple sets, you can specify if the set was a warm up, working or back off set.
 You do not have to have all of them, if you did not do back off sets you can just omit them from the file.
 Sets are in the format `set number x reps number @ weight(kg) or (lbs)` e.g `1 x 10 @50kg`  
+If you wish to save the exercise without giving the set information, you can just leave that empty and only the exercise name will be saved in the database.  
 You can also say if a set was a PR by adding `(PR)` at the end of the set e.g `1 x 2 @ 100kg (PR)`
 
 ## Command list
