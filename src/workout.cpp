@@ -27,8 +27,16 @@ const std::string& Workout::getDuration() const {
     return duration;
 }
 
-int Workout::getRating() const {
-    return rating;
+int Workout::getWorkoutRating() const {
+    return workoutRating;
+}
+
+int Workout::getPhysicalRating() const {
+    return physicalRating;
+}
+
+int Workout::getMentalRating() const {
+    return mentalRating;
 }
 
 void Workout::setDate(const std::string& date){
@@ -47,8 +55,16 @@ void Workout::setDuration(const std::string& duration){
     this->duration = duration;
 }
 
-void Workout::setRating(const int rating){
-    this->rating = rating;
+void Workout::setWorkoutRating(const int workoutRating){
+    this->workoutRating = workoutRating;
+}
+
+void Workout::setPhysicalRating(const int physicalRating){
+    this->physicalRating = physicalRating;
+}
+
+void Workout::setMentalRating(const int mentalRating){
+    this->mentalRating = mentalRating;
 }
 
 const std::vector<Exercise>& Workout::addExercisesToVector(const Exercise& newExercise) {
@@ -133,15 +149,43 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
             location = line.substr(10);
         }
         // Check for rating
-        else if (line.find("Rating") != std::string::npos) {
+        else if (line.find("Workout Rating") != std::string::npos) {
             size_t pos;
-            rating = std::stoi(line.substr(8),&pos);
+            workoutRating = std::stoi(line.substr(16), &pos);
 
-            if (pos != line.substr(8).length()) {
+            if (pos != line.substr(16).length()) {
                 std::cerr << "[Error] [Workout File] Workout rating is not a valid integer\n";
                 return std::nullopt;
-            } else if (rating < 1 || rating > 5) {
+            } else if (workoutRating < 1 || workoutRating > 5) {
                 std::cerr << "[Error] Workout rating is not in the range of 1 to 5\n";
+                return std::nullopt;
+            }
+        }
+
+        // Check for rating
+        else if (line.find("Physical Rating") != std::string::npos) {
+            size_t pos;
+            physicalRating = std::stoi(line.substr(17), &pos);
+
+            if (pos != line.substr(17).length()) {
+                std::cerr << "[Error] [Workout File] Physical rating is not a valid integer\n";
+                return std::nullopt;
+            } else if (physicalRating < 1 || physicalRating > 5) {
+                std::cerr << "[Error] Physical rating is not in the range of 1 to 5\n";
+                return std::nullopt;
+            }
+        }
+
+        // Check for rating
+        else if (line.find("Mental Rating") != std::string::npos) {
+            size_t pos;
+            mentalRating = std::stoi(line.substr(15), &pos);
+
+            if (pos != line.substr(15).length()) {
+                std::cerr << "[Error] [Workout File] Mental rating is not a valid integer\n";
+                return std::nullopt;
+            } else if (mentalRating < 1 || mentalRating > 5) {
+                std::cerr << "[Error] Mental rating is not in the range of 1 to 5\n";
                 return std::nullopt;
             }
         }
@@ -215,14 +259,14 @@ std::optional<Workout> Workout::getUserInput(){
     std::cout << "Location: ";
     std::cin >> location;
 
-    std::cout << "Rating: ";
-    std::cin >> rating;
+    std::cout << "Workout Rating: ";
+    std::cin >> workoutRating;
     if (std::cin.fail()) {
         std::cerr << "[Error] Workout rating is not a valid integer\n";
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return std::nullopt;
-    } else if (rating < 1 || rating > 5) {
+    } else if (workoutRating < 1 || workoutRating > 5) {
             std::cerr << "[Error] Workout rating is not in the range of 1 to 5\n";
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
