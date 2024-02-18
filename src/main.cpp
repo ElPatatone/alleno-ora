@@ -69,15 +69,15 @@ std::string getDirectoryForFiles(const std::string& configPath) {
 void helpSection(){
     std::cout << "[Usage]: Alleno [OPTIONS]\n"
               << "Options:\n"
-              << "  -s, --save   Save workout information to the database.\n"
+              << "  -a, --add Add workout information to the database.\n"
               << "  -c, --create Create a new file with a workout header after inputting the information.\n"
               << "  -g, --get    Get workout information for a given date and save it to a file.\n"
               << "  -h, --help   Show the help section.\n"
               << "Examples:\n"
-              << "  ./alleno -s workout.txt\n"
-              << "  ./alleno -c new_workout\n"
-              << "  ./alleno -g 2024/01/15\n"
-              << "  ./alleno -h\n";
+              << "  ./alleno -a/--add workout.txt\n"
+              << "  ./alleno -c/--create new_workout\n"
+              << "  ./alleno -g/--get 2024/01/15\n"
+              << "  ./alleno -h/--help\n";
 }
 
 int main (int argc, char *argv[]) {
@@ -89,7 +89,7 @@ int main (int argc, char *argv[]) {
     Database db(dbPath);
     db.initialize();
 
-    std::unordered_set<std::string_view> validOptions = {"-s", "-c", "-h", "-g", "--help", "--save", "--create", "--get"};
+    std::unordered_set<std::string_view> validOptions = {"-a", "-c", "-h", "-g", "--help", "--add", "--create", "--get"};
 
     // Hanlding case where multiple options are passed or where no options are passed.
     int count = 0;
@@ -127,7 +127,7 @@ int main (int argc, char *argv[]) {
         }
 
         // -s and --save option, save the workout information in the database.
-        if (args[i] == "-s" || args[i] == "--save") {
+        if (args[i] == "-a" || args[i] == "--add") {
             std::ifstream workoutFile{getDirectoryForFiles(CONFIG_FILE_PATH) + std::string(args[i + 1])};
 
             if (!workoutFile.is_open()){
