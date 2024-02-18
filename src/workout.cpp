@@ -160,8 +160,8 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
             if (pos != line.substr(16).length()) {
                 std::cerr << "[Error] [Workout File] Workout rating is not a valid integer\n";
                 return std::nullopt;
-            } else if (workoutRating < 1 || workoutRating > 5) {
-                std::cerr << "[Error] Workout rating is not in the range of 1 to 5\n";
+            } else if (workoutRating < 1 || workoutRating > 10) {
+                std::cerr << "[Error] Workout rating is not in the range of 1 to 10\n";
                 return std::nullopt;
             }
         }
@@ -174,8 +174,8 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
             if (pos != line.substr(17).length()) {
                 std::cerr << "[Error] [Workout File] Physical rating is not a valid integer\n";
                 return std::nullopt;
-            } else if (physicalRating < 1 || physicalRating > 5) {
-                std::cerr << "[Error] Physical rating is not in the range of 1 to 5\n";
+            } else if (physicalRating < 1 || physicalRating > 10) {
+                std::cerr << "[Error] Physical rating is not in the range of 1 to 10\n";
                 return std::nullopt;
             }
         }
@@ -188,8 +188,8 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
             if (pos != line.substr(15).length()) {
                 std::cerr << "[Error] [Workout File] Mental rating is not a valid integer\n";
                 return std::nullopt;
-            } else if (mentalRating < 1 || mentalRating > 5) {
-                std::cerr << "[Error] Mental rating is not in the range of 1 to 5\n";
+            } else if (mentalRating < 1 || mentalRating > 10) {
+                std::cerr << "[Error] Mental rating is not in the range of 1 to 10\n";
                 return std::nullopt;
             }
         }
@@ -280,12 +280,41 @@ std::optional<Workout> Workout::getUserInput(){
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return std::nullopt;
-    } else if (workoutRating < 1 || workoutRating > 5) {
-            std::cerr << "[Error] Workout rating is not in the range of 1 to 5\n";
+    } else if (workoutRating < 1 || workoutRating > 10) {
+            std::cerr << "[Error] Workout rating is not in the range of 1 to 10\n";
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             return std::nullopt;
         }
+
+    std::cout << "Physical Rating: ";
+    std::cin >> physicalRating;
+    if (std::cin.fail()) {
+        std::cerr << "[Error] Physical rating is not a valid integer\n";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        return std::nullopt;
+    } else if (physicalRating < 1 || physicalRating > 10) {
+            std::cerr << "[Error] Physical rating is not in the range of 1 to 10\n";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            return std::nullopt;
+        }
+
+    std::cout << "Mental Rating: ";
+    std::cin >> mentalRating;
+    if (std::cin.fail()) {
+        std::cerr << "[Error] Mental rating is not a valid integer\n";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        return std::nullopt;
+    } else if (mentalRating < 1 || mentalRating > 10) {
+            std::cerr << "[Error] Mental rating is not in the range of 1 to 10\n";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            return std::nullopt;
+        }
+
     return *this;
 }
 
