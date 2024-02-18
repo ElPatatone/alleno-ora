@@ -4,5 +4,6 @@ src/alleno
 *.norg
 build/
 *.json
+.cache/
 
 

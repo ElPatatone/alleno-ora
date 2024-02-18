@@ -132,7 +132,7 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
             date = line.substr(6);
         }
         // Check for start time
-        else if (line.find("Start") != std::string::npos) {
+        else if (line.find("Start Time") != std::string::npos) {
             if (!(File::isTimeValid(line.substr(12)))) {
                 std::cerr << "[Error] [Workout File] Workout start time is in the wrong format. e.g (hh:mm) \n";
                 return std::nullopt;
@@ -195,9 +195,9 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
         }
 
         // Check for notes
-        else if (line.find("Notes start") != std::string::npos) {
+        else if (line.find("Notes Start:") != std::string::npos) {
             while (std::getline(workoutFile, line)) {
-                if (line.find("Notes end") != std::string::npos) {
+                if (line.find("Notes End") != std::string::npos) {
                     break;
                 }
                 notes += line + "\n";

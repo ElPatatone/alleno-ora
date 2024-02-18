@@ -6,7 +6,6 @@
 #include <string>
 #include <sqlite3.h>
 #include <unordered_set>
-
 const std::string CONFIG_FILE_PATH = "config.txt";
 
 // Helper function to conver the date in the right format to be used to make the file name.
@@ -153,7 +152,7 @@ int main (int argc, char *argv[]) {
                 return 1;
             }
             else {
-                std::string fileName = std::string(args[i + 1]);
+                std::string fileName = getDirectoryForFiles(CONFIG_FILE_PATH) + std::string(args[i + 1]);
                 File newFile(fileName);
                 Workout newWorkout{};
                 newFile.makeWorkoutFileHeader(newWorkout);

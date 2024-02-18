@@ -1,6 +1,7 @@
 #include "file.hpp"
 #include <iostream>
 #include <sstream>
+#include <string>
 
 File::File(const std::string& fileName) : fileName(fileName), file(fileName) {}
 
@@ -27,10 +28,10 @@ bool File::isTimeValid(const std::string& time){
     }
 
     int hour, minutes;
-    char columns;
+    char colon;
     std::istringstream stream(time);
-    if (stream >> hour >> columns >> minutes && stream.eof()) {
-        if (hour < 0 || hour > 23 || minutes < 0 || minutes > 59 || columns != ':') {
+    if (stream >> hour >> colon >> minutes && stream.eof()) {
+        if (hour < 0 || hour > 23 || colon != ':' || minutes < 0 || minutes > 59) {
             return false;
         }
         return true;
@@ -88,7 +89,9 @@ void File::makeWorkoutFileHeader(Workout& workout){
         workoutFile << "Start Time: " << workout.getStartTime() << '\n';
         workoutFile << "Duration: " << workout.getDuration() << '\n';
         workoutFile << "Location: " << workout.getLocation() << '\n';
-        workoutFile << "Rating: " << workout.getWorkoutRating() << '\n';
+        workoutFile << "Workout Rating: " << workout.getWorkoutRating() << '\n';
+        workoutFile << "Physical Rating: " << workout.getPhysicalRating() << '\n';
+        workoutFile << "Mental Rating: " << workout.getMentalRating() << '\n';
     }
     workoutFile.close();
 }
