@@ -118,6 +118,7 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
     std::string line;
     Exercise exercise;
     Set set;
+    bool readingNotes = false;
 
     while (getline(workoutFile, line)) {
         if (line.empty()) {
@@ -196,12 +197,15 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
 
         // Check for notes
         else if (line.find("Notes Start:") != std::string::npos) {
-            while (std::getline(workoutFile, line)) {
-                if (line.find("Notes End") != std::string::npos) {
-                    break;
-                }
-                notes += line + "\n";
-            }
+            readingNotes = true;
+            continue;
+        }
+        else if (line.find("Notes End") != std::string::npos) {
+            readingNotes = false;
+            continue;
+        }
+        if (readingNotes) {
+            notes += line + "\n";
         }
 
         // Check for exercise name
