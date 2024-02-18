@@ -27,6 +27,10 @@ const std::string& Workout::getDuration() const {
     return duration;
 }
 
+const std::string& Workout::getNotes() const {
+    return notes;
+}
+
 int Workout::getWorkoutRating() const {
     return workoutRating;
 }
@@ -187,6 +191,16 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
             } else if (mentalRating < 1 || mentalRating > 5) {
                 std::cerr << "[Error] Mental rating is not in the range of 1 to 5\n";
                 return std::nullopt;
+            }
+        }
+
+        // Check for notes
+        else if (line.find("Notes start") != std::string::npos) {
+            while (std::getline(workoutFile, line)) {
+                if (line.find("Notes end") != std::string::npos) {
+                    break;
+                }
+                notes += line + "\n";
             }
         }
 
