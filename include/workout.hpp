@@ -14,7 +14,7 @@ struct Set {
     SetType setType = UNKNOWN_SETS;
     int setNumber = 0;
     int repsNumber = 0;
-    int weight = 0;
+    float weight = 0;
     bool isPR = false;
 
     std::string getSetType() const;
@@ -29,7 +29,7 @@ struct Exercise {
     std::string name;
     std::vector<Set> setsVector;
 
-    void addSet(int setNumber, int repsNumber, int weight, const std::string& setType, bool isPR);
+    void addSet(int setNumber, int repsNumber, float weight, const std::string& setType, bool isPR);
 };
 
 class Workout {
@@ -59,6 +59,7 @@ public:
     void setWorkoutRating(const int workoutRating);
     void setPhysicalRating(const int physicalRating);
     void setMentalRating(const int mentalRating);
+    void setNotes(const std::string& notes);
 
 private:
     std::vector<Exercise> exercisesVector;

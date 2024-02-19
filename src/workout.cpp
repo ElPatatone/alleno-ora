@@ -71,6 +71,10 @@ void Workout::setMentalRating(const int mentalRating){
     this->mentalRating = mentalRating;
 }
 
+void Workout::setNotes(const std::string& notes){
+    this->notes = notes;
+}
+
 const std::vector<Exercise>& Workout::addExercisesToVector(const Exercise& newExercise) {
     this->exercisesVector.push_back(newExercise);
     return exercisesVector;
@@ -103,7 +107,7 @@ SetType Set::convertStringToSetType(const std::string& setType) {
     }
 }
 
-void Exercise::addSet(int setNumber, int repsNumber, int weight, const std::string& setType, bool isPR) {
+void Exercise::addSet(int setNumber, int repsNumber, float weight, const std::string& setType, bool isPR) {
     Set set;
     set.setNumber = setNumber;
     set.repsNumber = repsNumber;
@@ -231,6 +235,7 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
 
             // Check if it is a PR. If it is found it will return true if not false.
             set.isPR = (line.find("(PR)") != std::string::npos);
+            std::cout << set.weight << "\n";
 
             exercise.addSet(set.setNumber, set.repsNumber, set.weight, set.getSetType(), set.isPR);
         }

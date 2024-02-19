@@ -107,7 +107,12 @@ void File::makeFetchedWorkoutFile(const Workout& workout) {
         fetchedWorkoutFile << "Start Time: " << workout.getStartTime() << '\n';
         fetchedWorkoutFile << "Duration: " << workout.getDuration() << '\n';
         fetchedWorkoutFile << "Location: " << workout.getLocation() << '\n';
-        fetchedWorkoutFile << "Rating: " << workout.getWorkoutRating() << "\n\n";
+        fetchedWorkoutFile << "Workout Rating: " << workout.getWorkoutRating() << "\n";
+        fetchedWorkoutFile << "Physical Rating: " << workout.getPhysicalRating() << "\n";
+        fetchedWorkoutFile << "Mental Rating: " << workout.getMentalRating() << "\n\n";
+
+        fetchedWorkoutFile << "Notes Start: \n" << workout.getNotes();
+        fetchedWorkoutFile << "Notes End" << "\n\n";
 
         // Write the exercise names and the sets for each exercise.
         for (const auto& exercise : workout.getExercisesVector()) {

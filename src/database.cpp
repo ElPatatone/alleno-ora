@@ -12,7 +12,7 @@ Database::~Database() {
 int Database::open() {
     // the sqlite3_open() function is causing memory leaks.
     // I am not sure what is going on as the error is not descriptive.
-    // This could be an issue with the actual sqlite3 lib and not my code (it is most likely me...).
+    // This could be an issue with the actual sqlite3 lib and not my code (it is most likely me...). int SQLStatus = sqlite3_open(dbPath.c_str(), &db);
     int SQLStatus = sqlite3_open(dbPath.c_str(), &db);
     if (SQLStatus != SQLITE_OK) {
         std::cerr << "[Error] Failed to open database: " <<  sqlite3_errmsg(db) << "\n";
@@ -82,7 +82,7 @@ int Database::initialize() {
                                         "exercise_id INTEGER,"
                                         "set_number INTEGER,"
                                         "reps INTEGER,"
-                                        "weight INTEGER,"
+                                        "weight REAL,"
                                         "set_type TEXT,"
                                         "is_pr INTEGER,"
                                         "FOREIGN KEY(exercise_id) REFERENCES exercises(id)"
@@ -263,7 +263,10 @@ std::optional<Workout> Database::getWorkout(const std::string& date) {
         workout.setStartTime(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
         workout.setDuration(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
         workout.setWorkoutRating(sqlite3_column_int(stmt, 4));
-        workout.setLocation(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5)));
+        workout.setPhysicalRating(sqlite3_column_int(stmt, 5));
+        workout.setMentalRating(sqlite3_column_int(stmt, 6));
+        workout.setLocation(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 7)));
+        workout.setNotes(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 8)));
 
         // retrieve exercises for the workout.
         getExercisesForWorkout(workoutId, workout);
@@ -352,7 +355,7 @@ int Database::getSetsForExercise(int exerciseId, Exercise& exercise) {
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         int setNumber = sqlite3_column_int(stmt, 0);
         int reps = sqlite3_column_int(stmt, 1);
-        int weight = sqlite3_column_int(stmt, 2);
+        float weight = sqlite3_column_double(stmt, 2);
         std::string setType = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
         bool isPR = sqlite3_column_int(stmt, 4);
 
