@@ -82,7 +82,7 @@ int Database::initialize() {
                                         "exercise_id INTEGER,"
                                         "set_number INTEGER,"
                                         "reps INTEGER,"
-                                        "weight REAL,"
+                                        "weight FLOAT,"
                                         "set_type TEXT,"
                                         "is_pr INTEGER,"
                                         "FOREIGN KEY(exercise_id) REFERENCES exercises(id)"
@@ -211,7 +211,7 @@ int Database::insertSets(const Set& set, int exerciseId) {
     sqlite3_bind_int(stmt, 1, exerciseId);
     sqlite3_bind_int(stmt, 2, set.setNumber);
     sqlite3_bind_int(stmt, 3, set.repsNumber);
-    sqlite3_bind_int(stmt, 4, set.weight);
+    sqlite3_bind_double(stmt, 4, set.weight);
     sqlite3_bind_text(stmt, 5, set.getSetType().c_str(), -1, SQLITE_STATIC);
     sqlite3_bind_int(stmt, 6, set.isPR);
 
