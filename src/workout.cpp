@@ -15,8 +15,7 @@ const std::string& Workout::getDate() const {
     return date;
 }
 
-const std::string& Workout::getStartTime() const {
-    return startTime;
+const std::string& Workout::getStartTime() const { return startTime;
 }
 
 const std::string& Workout::getLocation() const {
@@ -29,6 +28,10 @@ const std::string& Workout::getDuration() const {
 
 const std::string& Workout::getNotes() const {
     return notes;
+}
+
+const std::string& Workout::getName() const {
+    return name;
 }
 
 int Workout::getWorkoutRating() const {
@@ -73,6 +76,10 @@ void Workout::setMentalRating(const int mentalRating){
 
 void Workout::setNotes(const std::string& notes){
     this->notes = notes;
+}
+
+void Workout::setName(const std::string& name){
+    this->name = name;
 }
 
 const std::vector<Exercise>& Workout::addExercisesToVector(const Exercise& newExercise) {
@@ -136,6 +143,12 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
             }
             date = line.substr(6);
         }
+
+        // Check for the name
+        else if (line.find("Name") != std::string::npos) {
+            name = line.substr(6);
+        }
+
         // Check for start time
         else if (line.find("Start Time") != std::string::npos) {
             if (!(File::isTimeValid(line.substr(12)))) {
@@ -235,7 +248,6 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
 
             // Check if it is a PR. If it is found it will return true if not false.
             set.isPR = (line.find("(PR)") != std::string::npos);
-            std::cout << set.weight << "\n";
 
             exercise.addSet(set.setNumber, set.repsNumber, set.weight, set.getSetType(), set.isPR);
         }
@@ -260,6 +272,9 @@ std::optional<Workout> Workout::getUserInput(){
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return std::nullopt;
     }
+
+    // std::cout << "Name: ";
+    // std::cin >> name;
 
     std::cout << "Start time: ";
     std::cin >> startTime;

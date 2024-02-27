@@ -104,6 +104,7 @@ void File::makeFetchedWorkoutFile(const Workout& workout) {
     } else {
         // Write the header for the file
         fetchedWorkoutFile << "Date: " << workout.getDate() << '\n';
+        fetchedWorkoutFile << "Name: " << workout.getName() << '\n';
         fetchedWorkoutFile << "Start Time: " << workout.getStartTime() << '\n';
         fetchedWorkoutFile << "Duration: " << workout.getDuration() << '\n';
         fetchedWorkoutFile << "Location: " << workout.getLocation() << '\n';

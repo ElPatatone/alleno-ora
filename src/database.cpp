@@ -47,6 +47,7 @@ int Database::initialize() {
         std::string createWorkoutsTableQuery = "CREATE TABLE workouts ("
                                             "id INTEGER PRIMARY KEY,"
                                             "date TEXT,"
+                                            "name TEXT,"
                                             "start_time TEXT,"
                                             "duration TEXT,"
                                             "workout_rating INTEGER,"
@@ -71,8 +72,7 @@ int Database::initialize() {
                                              ");";
         SQLStatus = sqlite3_exec(db, createExerciseTableQuery.c_str(), NULL, 0, NULL);
         if (SQLStatus != SQLITE_OK) {
-            std::cerr << "[Error] Failed to create exercises table: " <<  sqlite3_errmsg(db) << "\n";
-            close();
+            std::cerr << "[Error] Failed to create exercises table: " <<  sqlite3_errmsg(db) << "\n"; close();
             return SQLStatus;
         }
 
@@ -109,7 +109,7 @@ int Database::insertWorkout(const Workout& workout) {
         return openStatus;
     }
 
-    std::string insertWorkoutQuery = "INSERT INTO workouts (date, start_time, duration, workout_rating, physical_rating, mental_rating, location, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    std::string insertWorkoutQuery = "INSERT INTO workouts (date, name, start_time, duration, workout_rating, physical_rating, mental_rating, location, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     sqlite3_stmt* stmt = nullptr;
     int SQLStatus = sqlite3_prepare_v2(db, insertWorkoutQuery.c_str(), -1, &stmt, nullptr);
@@ -121,13 +121,14 @@ int Database::insertWorkout(const Workout& workout) {
     }
 
     sqlite3_bind_text(stmt, 1, workout.getDate().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 2, workout.getStartTime().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 3, workout.getDuration().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_int(stmt, 4, workout.getWorkoutRating());
-    sqlite3_bind_int(stmt, 5, workout.getPhysicalRating());
-    sqlite3_bind_int(stmt, 6, workout.getMentalRating());
-    sqlite3_bind_text(stmt, 7, workout.getLocation().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 8, workout.getNotes().c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, workout.getName().c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, workout.getStartTime().c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 4, workout.getDuration().c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 5, workout.getWorkoutRating());
+    sqlite3_bind_int(stmt, 6, workout.getPhysicalRating());
+    sqlite3_bind_int(stmt, 7, workout.getMentalRating());
+    sqlite3_bind_text(stmt, 8, workout.getLocation().c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 9, workout.getNotes().c_str(), -1, SQLITE_STATIC);
 
     SQLStatus = sqlite3_step(stmt);
 
@@ -260,13 +261,14 @@ std::optional<Workout> Database::getWorkout(const std::string& date) {
         // initialize the workout values after retrieving them from the database.
         int workoutId = sqlite3_column_int(stmt, 0);
         workout.setDate(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)));
-        workout.setStartTime(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
-        workout.setDuration(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
-        workout.setWorkoutRating(sqlite3_column_int(stmt, 4));
-        workout.setPhysicalRating(sqlite3_column_int(stmt, 5));
-        workout.setMentalRating(sqlite3_column_int(stmt, 6));
-        workout.setLocation(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 7)));
-        workout.setNotes(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 8)));
+        workout.setName(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
+        workout.setStartTime(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
+        workout.setDuration(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4)));
+        workout.setWorkoutRating(sqlite3_column_int(stmt, 5));
+        workout.setPhysicalRating(sqlite3_column_int(stmt, 6));
+        workout.setMentalRating(sqlite3_column_int(stmt, 7));
+        workout.setLocation(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 8)));
+        workout.setNotes(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 9)));
 
         // retrieve exercises for the workout.
         getExercisesForWorkout(workoutId, workout);

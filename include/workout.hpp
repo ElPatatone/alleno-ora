@@ -45,6 +45,7 @@ public:
     const std::string& getLocation() const;
     const std::string& getDuration() const;
     const std::string& getNotes() const;
+    const std::string& getName() const;
     int getWorkoutRating() const;
     int getPhysicalRating() const;
     int getMentalRating() const;
@@ -60,6 +61,7 @@ public:
     void setPhysicalRating(const int physicalRating);
     void setMentalRating(const int mentalRating);
     void setNotes(const std::string& notes);
+    void setName(const std::string& name);
 
 private:
     std::vector<Exercise> exercisesVector;
@@ -68,6 +70,7 @@ private:
     std::string location;
     std::string duration;
     std::string notes;
+    std::string name;
     int workoutRating;
     int physicalRating;
     int mentalRating;
