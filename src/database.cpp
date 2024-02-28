@@ -1,7 +1,10 @@
 #include "database.hpp"
 #include <iostream>
 #include <filesystem>
+#include <optional>
 #include <sqlite3.h>
+#include <string>
+#include <vector>
 
 Database::Database(const std::string& dbPath) : db(nullptr), dbPath(dbPath) {}
 
@@ -369,3 +372,82 @@ int Database::getSetsForExercise(int exerciseId, Exercise& exercise) {
     close();
     return SQLStatus;
 }
+
+std::optional<std::vector<Workout>> Database::getDataForExercise(const std::string& exerciseName){
+    int openStatus = open();
+    if (openStatus != SQLITE_OK) {
+        return std::nullopt;
+    }
+
+    std::vector<Workout> workouts;
+
+    std::string getExercisesData = "SELECT w.date, s.weight, s.set_number, s.reps, s.is_pr "
+                                       "FROM workouts w "
+                                       "JOIN exercises e ON w.id = e.workout_id "
+                                       "JOIN sets s ON e.id = s.exercise_id "
+                                       "WHERE e.name = ? "
+                                       "AND s.set_type = 'Working sets';";
+
+    sqlite3_stmt* stmt = nullptr;
+    int SQLStatus = sqlite3_prepare_v2(db, getExercisesData.c_str(), -1, &stmt, nullptr);
+
+    if (SQLStatus != SQLITE_OK) {
+        std::cerr << "[Error] Failed to prepare statement for selecting exercise data: " << sqlite3_errmsg(db) << "\n";
+        close();
+        return std::nullopt;
+    }
+
+    SQLStatus = sqlite3_bind_text(stmt, 1, exerciseName.c_str(), -1, SQLITE_STATIC);
+
+    if (SQLStatus != SQLITE_OK) {
+        std::cerr << "[Error] Failed to bind parameters to query: " << sqlite3_errmsg(db) << "\n";
+        sqlite3_finalize(stmt);
+        close();
+        return std::nullopt;
+    }
+
+    Workout workout;
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        Exercise exercise;
+
+        // initialize the workout values after retrieving them from the database.
+        std::string date(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)));
+        float weight = sqlite3_column_double(stmt, 1);
+        int setNumber = sqlite3_column_int(stmt, 2);
+        int repsNumber = sqlite3_column_int(stmt, 3);
+        bool isPR = sqlite3_column_int(stmt, 4);
+
+        // Check if it's a new workout
+        if (workout.getDate() != date) {
+            if (!workout.getExercisesVector().empty()) {
+                workouts.push_back(workout);
+            }
+            workout = Workout();
+            workout.setDate(date);
+        }
+
+        workout.setDate(date);
+        exercise.name = exerciseName;
+        exercise.addSet(setNumber, repsNumber, weight, "Working sets", isPR);
+        workout.addExercisesToVector(exercise);
+
+        std::cout << date << '\n';
+        workouts.push_back(workout);
+    }
+    std::cout << workouts.size();
+
+    // Add the last workout to the vector
+    if (!workout.getExercisesVector().empty()) {
+        workouts.push_back(workout);
+    }
+
+    sqlite3_finalize(stmt);
+    close();
+
+    if (workouts.empty()) {
+        return std::nullopt;
+    } else {
+        return workouts;
+    }
+};

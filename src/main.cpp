@@ -6,6 +6,7 @@
 #include <string>
 #include <sqlite3.h>
 #include <unordered_set>
+#include <vector>
 const std::string CONFIG_FILE_PATH = "config.txt";
 
 // Helper function to conver the date in the right format to be used to make the file name.
@@ -88,7 +89,7 @@ int main (int argc, char *argv[]) {
     Database db(dbPath);
     db.initialize();
 
-    std::unordered_set<std::string_view> validOptions = {"-a", "-c", "-h", "-g", "--help", "--add", "--create", "--get"};
+    std::unordered_set<std::string_view> validOptions = {"-a", "-c", "-h", "-g", "-e", "--help", "--add", "--create", "--get", "--exercise"};
 
     // Hanlding case where multiple options are passed or where no options are passed.
     int count = 0;
@@ -165,27 +166,51 @@ int main (int argc, char *argv[]) {
                 std::cerr << "[Error] Please make sure to pass in the date of the workout to fetch its data.\n";
                 return 1;
             }
-            else {
-                std::string date = std::string(args[i + 1]);
-                if (!File::isDateValid(date)) {
-                    std::cerr << "[Error] Date value is in the wrong format. e.g (yyyy/mm/dd)\n";
-                    return 1;
-                } else {
-                    // get the workout from the database. If the function fails to return a value the fetchedWorkoutOptional will have value of nullopt.
-                    auto fetchedWorkoutOptional = db.getWorkout(date);
-                    if (fetchedWorkoutOptional.has_value()) {
-                        // as a value was returned, assign that to an actual workout instance.
-                        Workout fetchedWorkout = fetchedWorkoutOptional.value();
-                        // appending the workout file name to the directory where the user has chosen to store these files
-                        std::string fileName = workoutsPath + convertDate(date) + ".txt";
-                        File newFile(fileName);
-                        newFile.makeFetchedWorkoutFile(fetchedWorkout);
-                    } else {
-                        std::cerr << "[Error] No workout found for the date: " << std::string(args[i + 1]) << "\n";
-                        std::cerr << "[Error] Please make sure the workout already exists in the database.\n";
-                        return 1;
-                    }
-                }
+            std::string date = std::string(args[i + 1]);
+            if (!File::isDateValid(date)) {
+                std::cerr << "[Error] Date value is in the wrong format. e.g (yyyy/mm/dd)\n";
+                return 1;
+            }
+            // get the workout from the database. If the function fails to return a value the fetchedWorkoutOptional will have value of nullopt.
+            auto fetchedWorkoutOptional = db.getWorkout(date);
+            if (fetchedWorkoutOptional.has_value()) {
+                // as a value was returned, assign that to an actual workout instance.
+                Workout fetchedWorkout = fetchedWorkoutOptional.value();
+                // appending the workout file name to the directory where the user has chosen to store these files
+                std::string fileName = workoutsPath + convertDate(date) + ".txt";
+                File newFile(fileName);
+                newFile.makeFetchedWorkoutFile(fetchedWorkout);
+            } else {
+                std::cerr << "[Error] No workout found for the date: " << std::string(args[i + 1]) << "\n";
+                std::cerr << "[Error] Please make sure the workout already exists in the database.\n";
+                return 1;
+            }
+        }
+
+        // -c and --get option, get the workout data for a date given by the user. Then save the information to a file.
+        if (args[i] == "-e" || args[i] == "--exercise") {
+            if (args[i + 1] == "") {
+                std::cerr << "[Error] Please make sure to pass in the name of the exercise to fetch its data.\n";
+                return 1;
+            }
+            std::string exercise = std::string(args[i + 1]);
+            for (size_t j = i + 2; j < args.size(); ++j) {
+                exercise += " " + std::string(args[j]);
+            }
+
+            // get the workout from the database. If the function fails to return a value the fetchedWorkoutOptional will have value of nullopt.
+            auto fetchedExerciseOptional = db.getDataForExercise(exercise);
+            if (fetchedExerciseOptional.has_value()) {
+                // as a value was returned, assign that to an actual workout instance.
+                std::vector<Workout> fetchedExerciseData = fetchedExerciseOptional.value();
+                // appending the workout file name to the directory where the user has chosen to store these files
+                std::string fileName = workoutsPath + "data.txt";
+                File newFile(fileName);
+                newFile.makeFetchedExerciseFile(fetchedExerciseData);
+            } else {
+                std::cerr << "[Error] No data found for the exercise: " << std::string(args[i + 1]) << "\n";
+                std::cerr << "[Error] Please make sure the exercise is in the database.\n";
+                return 1;
             }
         }
     }

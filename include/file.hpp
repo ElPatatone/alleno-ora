@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 #include <optional>
+#include <vector>
 
 class File {
 public:
@@ -11,6 +12,7 @@ public:
 
     void makeWorkoutFileHeader(Workout& workout);
     void makeFetchedWorkoutFile(const Workout& workout);
+    void makeFetchedExerciseFile(const std::vector<Workout> workouts);
 
     // made this static to allow usage without needing an instance of the File class. Should maybe move this.
     static bool isDateValid(const std::string& date);

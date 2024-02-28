@@ -1,7 +1,9 @@
 #include "file.hpp"
 #include <iostream>
+#include <ostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 File::File(const std::string& fileName) : fileName(fileName), file(fileName) {}
 
@@ -101,39 +103,63 @@ void File::makeFetchedWorkoutFile(const Workout& workout) {
 
     if (!fetchedWorkoutFile.is_open()){
         std::cerr << "[Error] File could not be opened for writing.\n";
-    } else {
-        // Write the header for the file
-        fetchedWorkoutFile << "Date: " << workout.getDate() << '\n';
-        fetchedWorkoutFile << "Name: " << workout.getName() << '\n';
-        fetchedWorkoutFile << "Start Time: " << workout.getStartTime() << '\n';
-        fetchedWorkoutFile << "Duration: " << workout.getDuration() << '\n';
-        fetchedWorkoutFile << "Location: " << workout.getLocation() << '\n';
-        fetchedWorkoutFile << "Workout Rating: " << workout.getWorkoutRating() << "\n";
-        fetchedWorkoutFile << "Physical Rating: " << workout.getPhysicalRating() << "\n";
-        fetchedWorkoutFile << "Mental Rating: " << workout.getMentalRating() << "\n\n";
+        return;
+    }
+    // Write the header for the file
+    fetchedWorkoutFile << "Date: " << workout.getDate() << '\n';
+    fetchedWorkoutFile << "Name: " << workout.getName() << '\n';
+    fetchedWorkoutFile << "Start Time: " << workout.getStartTime() << '\n';
+    fetchedWorkoutFile << "Duration: " << workout.getDuration() << '\n';
+    fetchedWorkoutFile << "Location: " << workout.getLocation() << '\n';
+    fetchedWorkoutFile << "Workout Rating: " << workout.getWorkoutRating() << "\n";
+    fetchedWorkoutFile << "Physical Rating: " << workout.getPhysicalRating() << "\n";
+    fetchedWorkoutFile << "Mental Rating: " << workout.getMentalRating() << "\n\n";
 
-        fetchedWorkoutFile << "Notes Start: \n" << workout.getNotes();
-        fetchedWorkoutFile << "Notes End" << "\n\n";
+    fetchedWorkoutFile << "Notes Start: \n" << workout.getNotes();
+    fetchedWorkoutFile << "Notes End" << "\n\n";
 
-        // Write the exercise names and the sets for each exercise.
-        for (const auto& exercise : workout.getExercisesVector()) {
-            fetchedWorkoutFile << "- " << exercise.name << '\n';
-            std::string printedSetType = "";  // Variable to track printed set type for the current exercise
-            for (const auto& set : exercise.setsVector) {
-                if (set.getSetType() != printedSetType) {
-                    fetchedWorkoutFile << '\t' << set.getSetType() << '\n';
-                    printedSetType = set.getSetType();
-                }
-                if (set.isPR) {
-                    fetchedWorkoutFile << "\t\t" << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg (PR)\n";
-                } else {
-                    fetchedWorkoutFile << "\t\t" << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg\n";
-                }
+    // Write the exercise names and the sets for each exercise.
+    for (const auto& exercise : workout.getExercisesVector()) {
+        fetchedWorkoutFile << "- " << exercise.name << '\n';
+        std::string printedSetType = "";  // Variable to track printed set type for the current exercise
+        for (const auto& set : exercise.setsVector) {
+            if (set.getSetType() != printedSetType) {
+                fetchedWorkoutFile << '\t' << set.getSetType() << '\n';
+                printedSetType = set.getSetType();
             }
-            fetchedWorkoutFile << "\n";
+            if (set.isPR) {
+                fetchedWorkoutFile << "\t\t" << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg (PR)\n";
+            } else {
+                fetchedWorkoutFile << "\t\t" << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg\n";
+            }
         }
+        fetchedWorkoutFile << "\n";
     }
     std::cout << "File has been made successfully\n";
 
     fetchedWorkoutFile.close();
+}
+
+void File::makeFetchedExerciseFile(const std::vector<Workout> workouts){
+    std::ofstream fetchedExerciseFile{fileName};
+
+    if (!fetchedExerciseFile.is_open()){
+        std::cerr << "[Error] File could not be opened for writing.\n";
+        return;
+    }
+    for (const auto& workout: workouts) {
+        fetchedExerciseFile << "Date: " << workout.getDate() << '\n';
+        for (const auto& exercise : workout.getExercisesVector()) {
+            for (const auto& set : exercise.setsVector) {
+                if (set.isPR) {
+                    fetchedExerciseFile << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg (PR)\n";
+                } else {
+                    fetchedExerciseFile << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg\n";
+                }
+            }
+            fetchedExerciseFile << "\n";
+        }
+    }
+    std::cout << "File has been made successfully\n";
+    fetchedExerciseFile.close();
 }
