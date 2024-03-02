@@ -148,13 +148,13 @@ void File::makeFetchedExerciseFile(const std::vector<Workout> workouts){
         return;
     }
     for (const auto& workout: workouts) {
-        fetchedExerciseFile << "Date: " << workout.getDate() << '\n';
         for (const auto& exercise : workout.getExercisesVector()) {
+            fetchedExerciseFile << "Date: " << workout.getDate() << '\n';
             for (const auto& set : exercise.setsVector) {
                 if (set.isPR) {
-                    fetchedExerciseFile << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg (PR)\n";
+                    fetchedExerciseFile << "\t" << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg (PR)\n";
                 } else {
-                    fetchedExerciseFile << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg\n";
+                    fetchedExerciseFile << "\t" << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg\n";
                 }
             }
             fetchedExerciseFile << "\n";

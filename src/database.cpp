@@ -431,17 +431,12 @@ std::optional<std::vector<Workout>> Database::getDataForExercise(const std::stri
         exercise.name = exerciseName;
         exercise.addSet(setNumber, repsNumber, weight, "Working sets", isPR);
         workout.addExercisesToVector(exercise);
-
-        std::cout << date << '\n';
-        workouts.push_back(workout);
     }
-    std::cout << workouts.size();
 
     // Add the last workout to the vector
     if (!workout.getExercisesVector().empty()) {
         workouts.push_back(workout);
     }
-
     sqlite3_finalize(stmt);
     close();
 
