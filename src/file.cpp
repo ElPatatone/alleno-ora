@@ -147,9 +147,18 @@ void File::makeFetchedExerciseFile(const std::vector<Workout> workouts){
         std::cerr << "[Error] File could not be opened for writing.\n";
         return;
     }
+    std::string currentDate;
+
     for (const auto& workout: workouts) {
         for (const auto& exercise : workout.getExercisesVector()) {
-            fetchedExerciseFile << "Date: " << workout.getDate() << '\n';
+            if (workout.getDate() != currentDate) {
+                if (!currentDate.empty()) {
+                    fetchedExerciseFile << "\n";
+                }
+                currentDate = workout.getDate();
+                fetchedExerciseFile << "Date: " << currentDate << '\n';
+            }
+
             for (const auto& set : exercise.setsVector) {
                 if (set.isPR) {
                     fetchedExerciseFile << "\t" << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg (PR)\n";
@@ -157,7 +166,6 @@ void File::makeFetchedExerciseFile(const std::vector<Workout> workouts){
                     fetchedExerciseFile << "\t" << set.setNumber << " x " << set.repsNumber << " @ " << set.weight << "kg\n";
                 }
             }
-            fetchedExerciseFile << "\n";
         }
     }
     std::cout << "File has been made successfully\n";

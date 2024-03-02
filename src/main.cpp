@@ -204,7 +204,7 @@ int main (int argc, char *argv[]) {
                 // as a value was returned, assign that to an actual workout instance.
                 std::vector<Workout> fetchedExerciseData = fetchedExerciseOptional.value();
                 // appending the workout file name to the directory where the user has chosen to store these files
-                std::string fileName = workoutsPath + "data.txt";
+                std::string fileName = workoutsPath + exercise + ".txt";
                 File newFile(fileName);
                 newFile.makeFetchedExerciseFile(fetchedExerciseData);
             } else {
