@@ -79,6 +79,18 @@ alleno -c new_workout.txt
 alleno --create new_workout.txt
 ```
 
+#### -e and --exercise
+
+This will take in user input and fetch the data for the exercise given, it will only
+look for the Working sets for that exercise across all the workouts that are in the
+database. It will then create a file with that data with the name of the exercise given.
+e.g:
+
+```shell
+alleno -e Deadlift
+alleno --exercise Deadlift
+```
+
 #### -h and --help
 
 This will output the help section with examples for each of the commands for the CLI tool.
