@@ -240,7 +240,15 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
             set.setType = WORKING_SETS;
         } else if (line.find("Back off sets") != std::string::npos) {
             set.setType = BACK_OFF_SETS;
-        } else if (line.find("@") != std::string::npos) {
+        }
+
+        if (set.getSetType() == "Unknown") {
+            std::cerr << "[Error] [Workout File] Type of set is not valid.\n";
+            std::cerr << "[Error] [Workout File] Please try again.\n";
+            return std::nullopt;
+        }
+
+        if (line.find("@") != std::string::npos) {
             // Check for set information. number of sets, reps and weight done
             std::istringstream stream{line};
             char token;
@@ -248,9 +256,9 @@ std::optional<Workout> Workout::parseWorkoutData(std::ifstream& workoutFile){
 
             // Check if it is a PR. If it is found it will return true if not false.
             set.isPR = (line.find("(PR)") != std::string::npos);
-
-            exercise.addSet(set.setNumber, set.repsNumber, set.weight, set.getSetType(), set.isPR);
         }
+
+        exercise.addSet(set.setNumber, set.repsNumber, set.weight, set.getSetType(), set.isPR);
     }
 
     // add last exercise being parsed
