@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/alleno.dir/src/main.cpp.o CMakeFiles/alleno.dir/src/database.cpp.o CMakeFiles/alleno.dir/src/workout.cpp.o CMakeFiles/alleno.dir/src/file.cpp.o -o alleno  /usr/lib/x86_64-linux-gnu/libsqlite3.so 

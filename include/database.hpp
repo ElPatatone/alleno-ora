@@ -13,6 +13,7 @@ public:
     void close();
     bool exists();
     int initialize();
+    bool workoutExists(const std::string& date);
     int insertWorkout(const Workout& workout);
     int insertExercise(const Exercise& exercise, int workoutId);
     int insertSets(const Set& set, int exerciseId);

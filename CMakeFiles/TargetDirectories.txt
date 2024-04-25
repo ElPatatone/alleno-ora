@@ -1,0 +1,3 @@
+/home/elpatatone/Documents/alleno-ora/CMakeFiles/alleno.dir
+/home/elpatatone/Documents/alleno-ora/CMakeFiles/edit_cache.dir
+/home/elpatatone/Documents/alleno-ora/CMakeFiles/rebuild_cache.dir

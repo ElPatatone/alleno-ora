@@ -99,10 +99,39 @@ int Database::initialize() {
         close();
         std::cerr << "Database File has been made successfully\n";
     } else {
-        std::cerr << "Database File already exists\n";
+        // std::cerr << "Database File already exists\n";
     }
 
     return SQLITE_OK;
+}
+
+bool Database::workoutExists(const std::string& date) {
+    int openStatus = open();
+    if (openStatus != SQLITE_OK) {
+        return openStatus;
+    }
+
+    std::string query = "SELECT COUNT(*) FROM workouts WHERE date = ?";
+    sqlite3_stmt* stmt = nullptr;
+
+    int SQLStatus = sqlite3_prepare_v2(db, query.c_str(), -1, &stmt, nullptr);
+    if (SQLStatus != SQLITE_OK) {
+        std::cerr << "[Error] Failed to prepare statement for checking workout existence: " << sqlite3_errmsg(db) << "\n";
+        return SQLStatus; // Assume failure, don't insert the workout
+    }
+
+    sqlite3_bind_text(stmt, 1, date.c_str(), -1, SQLITE_STATIC);
+    SQLStatus = sqlite3_step(stmt);
+
+    if (SQLStatus != SQLITE_ROW) {
+        std::cerr << "[Error] Failed to execute statement for checking workout existence: " << sqlite3_errmsg(db) << "\n";
+        sqlite3_finalize(stmt);
+        return SQLStatus; // Assume failure, don't insert the workout
+    }
+
+    int count = sqlite3_column_int(stmt, 0);
+    sqlite3_finalize(stmt);
+    return count > 0; // If count > 0, workout with the same date exists
 }
 
 int Database::insertWorkout(const Workout& workout) {
@@ -110,6 +139,12 @@ int Database::insertWorkout(const Workout& workout) {
     int openStatus = open();
     if (openStatus != SQLITE_OK) {
         return openStatus;
+    }
+
+    if (workoutExists(workout.getDate())) {
+        std::cerr << "[Error] A workout with the same date already exists.\n";
+        std::cerr << "[Error] Please double check the date.\n";
+        return SQLITE_ERROR;
     }
 
     std::string insertWorkoutQuery = "INSERT INTO workouts (date, name, start_time, duration, workout_rating, physical_rating, mental_rating, location, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
