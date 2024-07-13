@@ -108,7 +108,6 @@ Also make sure you create a `config.txt` file in the `build` directory containin
 ```
 db - /example/directory
 workouts - /example/directory
-
 ```
 
 This file tells the CLI tool where do you want the database to be created and also where do you want the workout files made by the CLI tool to be stored
