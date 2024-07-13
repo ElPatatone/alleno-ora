@@ -72,11 +72,13 @@ void helpSection(){
               << "  -a, --add Add workout information to the database.\n"
               << "  -c, --create Create a new file with a workout header after inputting the information.\n"
               << "  -g, --get    Get workout information for a given date and save it to a file.\n"
+              << "  -e, --exercise Get information for a chosen exercise and save it to a file.\n"
               << "  -h, --help   Show the help section.\n"
               << "Examples:\n"
               << "  ./alleno -a/--add workout.txt\n"
               << "  ./alleno -c/--create new_workout\n"
               << "  ./alleno -g/--get 2024/01/15\n"
+              << "  ./alleno -e/--exercise Deadlift\n"
               << "  ./alleno -h/--help\n";
 }
 
@@ -89,7 +91,7 @@ int main (int argc, char *argv[]) {
     Database db(dbPath);
     db.initialize();
 
-    std::unordered_set<std::string_view> validOptions = {"-a", "-c", "-h", "-g", "-e", "--help", "--add", "--create", "--get", "--exercise"};
+    std::unordered_set<std::string_view> validOptions = {"-h", "--help", "-a", "--add", "-c", "--create", "-g", "--get", "-e", "--exercise"};
 
     // Hanlding case where multiple options are passed or where no options are passed.
     int count = 0;
