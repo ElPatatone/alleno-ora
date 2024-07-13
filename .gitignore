@@ -2,7 +2,8 @@
 src/*.txt
 src/alleno
 *.norg
-build/
+build/*
+!build/build.sh
 *.json
 .cache/
 CMakeFiles/
