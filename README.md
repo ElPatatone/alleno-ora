@@ -99,3 +99,16 @@ This will output the help section with examples for each of the commands for the
 alleno -h
 alleno --help
 ```
+
+## Build
+
+To build the CLI tool just run the `build.sh` script in the `build` directory.  
+Also make sure you create a `config.txt` file in the `build` directory containing the following
+
+```
+db - /example/directory
+workouts - /example/directory
+
+```
+
+This file tells the CLI tool where do you want the database to be created and also where do you want the workout files made by the CLI tool to be stored
