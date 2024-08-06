@@ -1,2 +1,2 @@
-cmake -S ../src
+cmake -S ../
 make
