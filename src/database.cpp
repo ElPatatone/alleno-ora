@@ -12,7 +12,6 @@ Database::Database(const std::string& dbPath) : db(nullptr), dbPath(dbPath) {}
 Database::~Database() {
     close();
 }
-
 int Database::open() {
     // the sqlite3_open() function is causing memory leaks.
     // I am not sure what is going on as the error is not descriptive.
