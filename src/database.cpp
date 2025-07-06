@@ -1,7 +1,8 @@
 #include "database.hpp"
+#include "workout.hpp"
 #include <iostream>
 #include <filesystem>
-#include <optional>
+#include <optional> 
 #include <sqlite3.h>
 #include <string>
 #include <vector>
@@ -440,7 +441,7 @@ std::optional<std::vector<Workout>> Database::getDataForExercise(const std::stri
         close();
         return std::nullopt;
     }
-
+    
     Workout workout;
 
     while (sqlite3_step(stmt) == SQLITE_ROW) {
