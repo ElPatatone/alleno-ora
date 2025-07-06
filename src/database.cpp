@@ -2,7 +2,7 @@
 #include "workout.hpp"
 #include <iostream>
 #include <filesystem>
-#include <optional> 
+#include <optional>
 #include <sqlite3.h>
 #include <string>
 #include <vector>
